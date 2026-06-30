@@ -1,0 +1,21 @@
+﻿<h2>Listings</h2>
+
+<% if (!listings || listings.length === 0) { %>
+  <p>No listings yet. Add one using the form above.</p>
+<% } else { %>
+  <% listings.forEach(function(listing) { %>
+    <div class="listing">
+      <h3><%= listing.title %></h3>
+      <p><strong>Tutor:</strong> <%= listing.tutor || 'N/A' %></p>
+      <p><strong>Module:</strong> <%= listing.module %></p>
+      <p><strong>Category:</strong> <%= listing.category %></p>
+      <p><%= listing.description %></p>
+      <p><strong>Price:</strong> <%= listing.price.toLowerCase() === 'free' ? 'Free' : '$' + listing.price %></p>
+      <form action="/delete" method="POST">
+        <input type="hidden" name="id" value="<%= listing.id %>" />
+        <input type="hidden" name="returnTo" value="<%= returnTo %>" />
+        <button class="delete-button" type="submit">Delete</button>
+      </form>
+    </div>
+  <% }) %>
+<% } %>

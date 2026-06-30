@@ -1,0 +1,40 @@
+﻿<form action="/add" method="POST">
+  <input type="hidden" name="returnTo" value="<%= routePath %>" />
+
+  <div>
+    <label for="title">Title</label>
+    <input id="title" type="text" name="title" required />
+  </div>
+
+  <div>
+    <label for="category">Category</label>
+    <select id="category" name="category">
+      <option value="Notes" <%= currentCategory === 'Notes' ? 'selected' : '' %>>Notes</option>
+      <option value="Tutoring" <%= currentCategory === 'Tutoring' ? 'selected' : '' %>>Tutoring</option>
+    </select>
+  </div>
+
+  <div>
+    <label for="tutor">Tutor Name</label>
+    <input id="tutor" type="text" name="tutor" placeholder="Tutor name or author" required />
+  </div>
+
+  <div>
+    <label for="module">Module</label>
+    <input id="module" type="text" name="module" placeholder="e.g. C270" required />
+  </div>
+
+  <div>
+    <label for="price">Price</label>
+    <input id="price" type="text" name="price" placeholder="Price or type 'Free'" required />
+  </div>
+
+  <div>
+    <label for="description">Description</label>
+    <textarea id="description" name="description" rows="4" required></textarea>
+  </div>
+
+  <div style="margin-top: 12px;">
+    <button type="submit">Add Listing</button>
+  </div>
+</form>

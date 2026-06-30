@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title><%= currentCategory %> Listings</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 24px; background: #f5f7fb; }
+      .container { max-width: 920px; margin: 0 auto; }
+      .card { background: #fff; border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin-bottom: 20px; }
+      .tabs { display: flex; gap: 12px; margin-bottom: 20px; }
+      .tabs a { padding: 10px 16px; text-decoration: none; border-radius: 6px; border: 1px solid #ccc; color: #333; }
+      .tabs a.active { background: #2c7be5; color: white; border-color: #2c7be5; }
+      .grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+      label { display: block; margin-bottom: 8px; }
+      input, select, textarea { width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ccc; border-radius: 4px; }
+      button { padding: 10px 16px; background: #2c7be5; color: white; border: none; border-radius: 4px; cursor: pointer; }
+      button:hover { background: #1a5fb4; }
+      .listing { border: 1px solid #ccc; border-radius: 8px; padding: 14px; margin-bottom: 12px; background: #fafafa; }
+      .listing h3 { margin-top: 0; }
+      .delete-button { background: #e63946; }
+      .toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Notes & Tutoring Marketplace</h1>
+
+      <div class="tabs">
+        <% categories.forEach(function(cat) { %>
+          <a href="/<%= cat.slug %>" class="<%= currentCategory === cat.label ? 'active' : '' %>"><%= cat.label %></a>
+        <% }) %>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <h2>Add a <%= currentCategory %> Listing</h2>
+          <%- include('listingform', { currentCategory: currentCategory, routePath: routePath }) %>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Search & Filter</h2>
+        <form action="<%= routePath %>" method="GET" class="toolbar">
+          <div style="flex:2; min-width:180px;">
+            <label for="search">Search</label>
+            <input id="search" name="search" placeholder="Title, module, tutor, or description" value="<%= search %>" />
+          </div>
+          <div style="flex:1; min-width:140px;">
+            <label for="minPrice">Min Price</label>
+            <input id="minPrice" name="minPrice" type="number" min="0" step="0.01" placeholder="0" value="<%= minPrice %>" />
+          </div>
+          <div style="flex:1; min-width:140px;">
+            <label for="maxPrice">Max Price</label>
+            <input id="maxPrice" name="maxPrice" type="number" min="0" step="0.01" placeholder="Max" value="<%= maxPrice %>" />
+          </div>
+          <div style="display:flex; flex-direction: column; gap: 8px; justify-content: flex-end;">
+            <button type="submit">Search</button>
+            <a href="<%= routePath %>" style="display:inline-block; text-align:center; padding:10px 16px; border-radius:4px; border:1px solid #ccc; color:#333; text-decoration:none;">Clear</a>
+          </div>
+        </form>
+      </div>
+
+      <div class="card">
+        <h2><%= currentCategory %> Listings</h2>
+        <%- include('listinglist', { listings: listings, returnTo: routePath }) %>
+      </div>
+    </div>
+  </body>
+</html>
