@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> - StudyHub</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/nav') %>
+  <main>
+    <div class="card">
+      <h1>My Profile</h1>
+      <% if (locals.success) { %>
+        <div class="alert alert-success"><%= success %></div>
+      <% } %>
+      <% if (locals.error) { %>
+        <div class="alert alert-error"><%= error %></div>
+      <% } %>
+
+      <div class="profile-info mb-2">
+        <p><strong>Username:</strong> <%= user.username %></p>
+        <p><strong>Joined:</strong> <%= user.created_at %></p>
+      </div>
+
+      <form action="/profile" method="POST">
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="name" value="<%= user.name %>" required>
+        </div>
+        <div class="form-group">
+          <label for="class">Class / Section</label>
+          <input type="text" id="class" name="class" value="<%= user.class %>" required>
+        </div>
+        <div class="form-group">
+          <label for="modules">My Modules</label>
+          <textarea id="modules" name="modules" rows="3" placeholder="e.g. C270, C271, C272"><%= user.modules %></textarea>
+          <small style="color: #888;">Separate module codes with commas</small>
+        </div>
+        <button type="submit" class="btn">Save Changes</button>
+      </form>
+    </div>
+  </main>
+</body>
+</html>
