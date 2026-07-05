@@ -132,11 +132,152 @@ input:focus, textarea:focus {
 .mt-2 { margin-top: 1rem; }
 .mb-2 { margin-bottom: 1rem; }
 
+select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+  background: #fff;
+}
+
+select:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52,152,219,0.2);
+}
+
+.checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 0.25rem;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+  width: auto;
+  cursor: pointer;
+}
+
+select[multiple] {
+  height: auto;
+  padding: 0.25rem;
+}
+
+select[multiple] optgroup {
+  font-weight: 600;
+  color: #2c3e50;
+  padding: 0.25rem 0;
+}
+
+select[multiple] option {
+  padding: 0.3rem 0.5rem;
+  font-weight: 400;
+}
+
+.helper-text {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  color: #777;
+  line-height: 1.5;
+}
+
+.helper-text a {
+  color: #3498db;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.helper-text a:hover {
+  color: #2980b9;
+}
+
+.onboarding-header {
+  margin-bottom: 1.5rem;
+}
+
+.onboarding-header h1 {
+  margin-bottom: 0.5rem;
+}
+
+.onboarding-header p {
+  color: #666;
+  font-size: 1rem;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #eee;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 0.15rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.role-student {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.role-teacher {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.role-admin {
+  background: #fce4ec;
+  color: #c62828;
+}
+
+.module-select-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+.module-select-item {
+  background: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 0.75rem;
+}
+
+.module-select-item label {
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.35rem;
+}
+
+.role-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
 .profile-info p {
   margin-bottom: 0.5rem;
 }
 
 .profile-info strong {
   display: inline-block;
-  width: 80px;
+  width: 110px;
+}
+
+.profile-info span {
+  color: #555;
 }
