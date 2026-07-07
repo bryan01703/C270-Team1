@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> - StudyHub</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/nav') %>
+  <main>
+    <div class="card">
+      <div class="onboarding-header">
+        <h1>Welcome to StudyHub!</h1>
+        <p>Tell us about yourself so we can tailor your experience.</p>
+      </div>
+
+      <% if (locals.error) { %>
+        <div class="alert alert-error"><%= error %></div>
+      <% } %>
+
+      <form action="/auth/register" method="POST">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" placeholder="Choose a unique username" required>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Create a strong password" required>
+        </div>
+
+        <div class="form-group">
+          <label for="full_name">Full Name</label>
+          <input type="text" id="full_name" name="full_name" placeholder="e.g. Alex Tan" required>
+        </div>
+
+        <div class="form-group">
+          <label>Select your class code for each module this semester:</label>
+          <div class="module-select-group">
+            <div class="module-select-item">
+              <label for="class_codes_C237">C237 — Software Application Development</label>
+              <select id="class_codes_C237" name="class_codes_C237">
+                <option value="">-- Not taking --</option>
+                <option value="C237-010">C237-010</option>
+                <option value="C237-020">C237-020</option>
+                <option value="C237-030">C237-030</option>
+              </select>
+            </div>
+            <div class="module-select-item">
+              <label for="class_codes_C270">C270 — DevOps Essentials</label>
+              <select id="class_codes_C270" name="class_codes_C270">
+                <option value="">-- Not taking --</option>
+                <option value="C270-010">C270-010</option>
+                <option value="C270-020">C270-020</option>
+              </select>
+            </div>
+            <div class="module-select-item">
+              <label for="class_codes_C304">C304 — Cloud Application Development</label>
+              <select id="class_codes_C304" name="class_codes_C304">
+                <option value="">-- Not taking --</option>
+                <option value="C304-010">C304-010</option>
+                <option value="C304-020">C304-020</option>
+              </select>
+            </div>
+            <div class="module-select-item">
+              <label for="class_codes_C218">C218 — UI/UX Design for Web & Mobile</label>
+              <select id="class_codes_C218" name="class_codes_C218">
+                <option value="">-- Not taking --</option>
+                <option value="C218-010">C218-010</option>
+                <option value="C218-020">C218-020</option>
+              </select>
+            </div>
+          </div>
+          <small class="helper-text">&#128161; Where do I find this? Check your <a href="#" onclick="alert('Open SNApp → Timetable or Attendance screen. Your module class code (e.g., C237-030) appears next to each scheduled module.'); return false;">SNApp timetable or attendance screen</a>! Your code (e.g., C237-030) is listed right next to your scheduled modules.</small>
+        </div>
+
+        <div class="form-group">
+          <label for="bio">Tell us about yourself!</label>
+          <textarea id="bio" name="bio" rows="3" placeholder="Tell us about yourself (e.g., your interests, coding goals, or a short bio)"></textarea>
+        </div>
+
+        <button type="submit" class="btn">Create Account</button>
+      </form>
+
+      <p class="mt-2 text-center"><a href="/login">&larr; Back to Login</a></p>
+    </div>
+  </main>
+</body>
+</html>

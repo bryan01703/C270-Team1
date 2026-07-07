@@ -1,47 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/style.css">
-    <title>Study Groups</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> - StudyHub</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
-
 <body>
-    <div class="container mt-5">
-        <h2 class="mb-4">Study Groups</h2>
+  <%- include('partials/nav') %>
+  <main class="wide">
+    <div class="card">
+      <div class="board-header">
+        <h1>Study Group Board</h1>
+        <a href="/studygroups/new" class="btn">+ Post a Session</a>
+      </div>
+      <p class="mb-2" style="color:#666;">Find a study session to join, or post your own — like an LFG listing for your modules.</p>
 
-        <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead class="table-primary">
-                    <tr>
-                        <th>Group Name</th>
-                        <th>Module</th>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Location</th>
-                        <th>Members</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <% for (let i = 0; i < studyGroups.length; i++) { %>
-                    <tr>
-                        <td> 
-                            <a href="/studygroups/<%= studyGroups[i].id %>">
-                                <%= studyGroups[i].groupName %>
-                            </a>
-                        </td>
-                        <td><%= studyGroups[i].module %></td>
-                        <td><%= studyGroups[i].date %></td>
-                        <td><%= studyGroups[i].time %></td>
-                        <td><%= studyGroups[i].location %></td>
-                        <td><%= studyGroups[i].members %></td>
-                    </tr>
-                    <% } %>
-                </tbody>
-            </table>
+      <% if (locals.error) { %>
+        <div class="alert alert-error"><%= error %></div>
+      <% } %>
+
+      <form action="/studygroups" method="GET" class="filter-bar mb-2">
+        <label for="module" style="display:inline; margin-right:0.5rem;">Filter by module:</label>
+        <select id="module" name="module" onchange="this.form.submit()" style="width:auto; display:inline-block;">
+          <option value="">All modules</option>
+          <% modules.forEach(function(m) { %>
+            <option value="<%= m.code %>" <%= selectedModule === m.code ? 'selected' : '' %>><%= m.code %> — <%= m.name %></option>
+          <% }) %>
+        </select>
+      </form>
+
+      <% if (groups.length === 0) { %>
+        <p style="color:#777;">No study sessions posted yet<% if (selectedModule) { %> for this module<% } %>. Be the first!</p>
+      <% } else { %>
+        <div class="listing-grid">
+          <% groups.forEach(function(g) { %>
+            <% var full = g.member_count >= g.max_slots; %>
+            <a href="/studygroups/<%= g.group_id %>" class="listing-card">
+              <div class="listing-card-top">
+                <span class="module-tag"><%= g.module_code %></span>
+                <span class="slots-tag <%= full ? 'slots-full' : '' %>">
+                  <%= g.member_count %>/<%= g.max_slots %> slots
+                </span>
+              </div>
+              <h3><%= g.group_name %></h3>
+              <p class="listing-meta">📅 <%= new Date(g.session_date).toLocaleDateString() %> · 🕐 <%= g.session_time %></p>
+              <p class="listing-meta">📍 <%= g.location %></p>
+              <p class="listing-meta">Hosted by <%= g.host_name %></p>
+              <% if (joinedIds.indexOf(g.group_id) !== -1) { %>
+                <span class="role-badge role-student">You joined</span>
+              <% } %>
+            </a>
+          <% }) %>
         </div>
+      <% } %>
+    </div>
+  </main>
 </body>
 </html>

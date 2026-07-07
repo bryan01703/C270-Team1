@@ -1,111 +1,55 @@
-const express = require("express")
-const {exec} = require("node:child_process")
-const http = require("http")
+require('dotenv').config();
 
+const express = require('express');
+const session = require('express-session');
+const path = require('path');
 
-const app = express()
-const server = http.createServer(app)
-const PORT = 3000
+const authRoutes = require('./routes/auth');
+const adminRoutes = require('./routes/admin');
+const studyGroupRoutes = require('./routes/studygroups');
 
-app.set("view engine","ejs")
-app.use(express.static("public"))
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-// enable form processing
-app.use(express.urlencoded({
-    extended: false
+app.set('view engine', 'ejs');
+
+app.use(express.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'studyhub-dev-secret',
+  resave: false,
+  saveUninitialized: false,
 }));
 
-// for database
-// app.get("/studygroups", (req, res) => {
-//     connection.query("SELECT * FROM studygroups", (err, results) => {
-//         if (err) throw err;
-
-//         res.render("studyGroups", {
-//             studyGroups: results
-//         });
-//     });
-// });
-
-app.get("/studygroups", (req, res) => {
-
-    const studyGroups = [
-        {
-            id: 1,
-            groupName: "Java Study",
-            module: "C237",
-            date: "2026-06-30",
-            time: "2:00 PM",
-            location: "Library",
-            members: 4
-        },
-        {
-            id: 2,
-            groupName: "Web Development",
-            module: "C369",
-            date: "2026-07-01",
-            time: "10:00 AM",
-            location: "Lab 2",
-            members: 6
-        }
-    ];
-
-    res.render("studyGroups", {
-        studyGroups
-    });
-
+app.use((req, res, next) => {
+  res.locals.userId = req.session.userId || null;
+  res.locals.userRole = req.session.user ? req.session.user.role_type : null;
+  next();
 });
 
-// for database
-// app.get("/studygroups/:id", (req, res) => {
-//     const id = req.params.id;
+app.use('/', authRoutes);
+app.use('/admin', adminRoutes);
+app.use('/', studyGroupRoutes);
 
-//     connection.query(
-//         "SELECT * FROM studygroups WHERE id = ?",
-//         [id],
-//         (err, results) => {
-//             if (err) throw err;
-
-//             res.render("studyGroupDetails", {
-//                 group: results[0]
-//             });
-//         }
-//     );
-// });
-
-app.get("/studygroups/:id", (req, res) => {
-
-    const studyGroups = [
-        {
-            id: 1,
-            groupName: "Java Study",
-            module: "C237",
-            date: "2026-06-30",
-            time: "2:00 PM",
-            location: "Library",
-            members: 4,
-            description: "Preparing for CA2."
-        },
-        {
-            id: 2,
-            groupName: "Web Development",
-            module: "C369",
-            date: "2026-07-01",
-            time: "10:00 AM",
-            location: "Lab 2",
-            members: 6,
-            description: "Working on the group project."
-        }
-    ];
-
-    const id = parseInt(req.params.id);
-    const group = studyGroups.find(g => g.id === id);
-
-    if (!group) {
-        return res.status(404).send("Study group not found");
-    }
-
-    res.render("studyGroupDetails", {studyGroups: [group] });
-
+app.get('/', (req, res) => {
+  if (req.session.userId) return res.redirect('/profile');
+  res.redirect('/login');
 });
 
-server.listen(PORT,()=> console.log("connected to localhost"),exec(`start http://localhost:${PORT}/`))
+app.get('/login', (req, res) => {
+  if (req.session.userId) return res.redirect('/profile');
+  res.render('login', { title: 'Log In' });
+});
+
+app.get('/register', (req, res) => {
+  if (req.session.userId) return res.redirect('/profile');
+  res.render('register', { title: 'Sign Up' });
+});
+
+app.get('/unauthorized', (req, res) => {
+  res.status(403).render('unauthorized', { title: 'Access Denied' });
+});
+
+app.listen(PORT, () => {
+  console.log(`StudyHub running at http://localhost:${PORT}`);
+});

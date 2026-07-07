@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> - StudyHub</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/nav') %>
+  <main>
+    <div class="card">
+      <h1>My Profile</h1>
+
+      <% if (locals.success) { %>
+        <div class="alert alert-success"><%= success %></div>
+      <% } %>
+      <% if (locals.error) { %>
+        <div class="alert alert-error"><%= error %></div>
+      <% } %>
+
+      <div class="profile-info mb-2">
+        <p><strong>Username:</strong> <span><%= user.username %></span></p>
+        <p><strong>Name:</strong> <span><%= user.full_name %></span></p>
+        <p><strong>Role:</strong> <span class="role-badge role-<%= user.role_type.toLowerCase() %>"><%= user.role_type %></span></p>
+        <p><strong>Joined:</strong> <span><%= user.created_at %></span></p>
+        <% if (user.bio) { %>
+          <p><strong>Bio:</strong> <span><%= user.bio %></span></p>
+        <% } %>
+        <% if (user.class_codes) { %>
+          <p><strong>Class Codes:</strong> <span><%= user.class_codes %></span></p>
+        <% } %>
+      </div>
+
+      <div class="role-actions mb-2">
+        <% if (user.role_type === 'Student') { %>
+          <a href="#" class="btn" onclick="alert('Homework tasks page coming soon!'); return false;">View Homework Tasks</a>
+        <% } else if (user.role_type === 'Teacher') { %>
+          <a href="#" class="btn" onclick="alert('Create Class Announcement feature coming soon!'); return false;">Create Class Announcement</a>
+        <% } else if (user.role_type === 'Admin') { %>
+          <a href="/admin/dashboard" class="btn btn-danger">Admin Control Panel</a>
+        <% } %>
+      </div>
+
+      <hr class="mb-2">
+
+      <h2 class="mb-1">Edit Profile</h2>
+
+      <form action="/profile" method="POST">
+        <div class="form-group">
+          <label for="bio">Tell us about yourself!</label>
+          <textarea id="bio" name="bio" rows="3" placeholder="Tell us about yourself (e.g., your interests, coding goals, or a short bio)"><%= user.bio || '' %></textarea>
+        </div>
+
+        <% if (user.role_type === 'Student' || user.role_type === 'Teacher') { %>
+          <% var codes = (user.class_codes || '').split(',').map(function(c) { return c.trim(); }); %>
+          <div class="form-group">
+            <label>Select your class code for each module this semester:</label>
+            <div class="module-select-group">
+              <div class="module-select-item">
+                <label for="class_codes_C237">C237 — Software Application Development</label>
+                <select id="class_codes_C237" name="class_codes_C237">
+                  <option value="">-- Not taking --</option>
+                  <option value="C237-010" <%= codes.indexOf('C237-010') !== -1 ? 'selected' : '' %>>C237-010</option>
+                  <option value="C237-020" <%= codes.indexOf('C237-020') !== -1 ? 'selected' : '' %>>C237-020</option>
+                  <option value="C237-030" <%= codes.indexOf('C237-030') !== -1 ? 'selected' : '' %>>C237-030</option>
+                </select>
+              </div>
+              <div class="module-select-item">
+                <label for="class_codes_C270">C270 — DevOps Essentials</label>
+                <select id="class_codes_C270" name="class_codes_C270">
+                  <option value="">-- Not taking --</option>
+                  <option value="C270-010" <%= codes.indexOf('C270-010') !== -1 ? 'selected' : '' %>>C270-010</option>
+                  <option value="C270-020" <%= codes.indexOf('C270-020') !== -1 ? 'selected' : '' %>>C270-020</option>
+                </select>
+              </div>
+              <div class="module-select-item">
+                <label for="class_codes_C304">C304 — Cloud Application Development</label>
+                <select id="class_codes_C304" name="class_codes_C304">
+                  <option value="">-- Not taking --</option>
+                  <option value="C304-010" <%= codes.indexOf('C304-010') !== -1 ? 'selected' : '' %>>C304-010</option>
+                  <option value="C304-020" <%= codes.indexOf('C304-020') !== -1 ? 'selected' : '' %>>C304-020</option>
+                </select>
+              </div>
+              <div class="module-select-item">
+                <label for="class_codes_C218">C218 — UI/UX Design for Web & Mobile</label>
+                <select id="class_codes_C218" name="class_codes_C218">
+                  <option value="">-- Not taking --</option>
+                  <option value="C218-010" <%= codes.indexOf('C218-010') !== -1 ? 'selected' : '' %>>C218-010</option>
+                  <option value="C218-020" <%= codes.indexOf('C218-020') !== -1 ? 'selected' : '' %>>C218-020</option>
+                </select>
+              </div>
+            </div>
+            <small class="helper-text">&#128161; Where do I find this? Check your <a href="#" onclick="alert('Open SNApp → Timetable or Attendance screen. Your module class code (e.g., C237-030) appears next to each scheduled module.'); return false;">SNApp timetable or attendance screen</a>! Your code (e.g., C237-030) is listed right next to your scheduled modules.</small>
+          </div>
+        <% } %>
+
+        <button type="submit" class="btn">Save Changes</button>
+      </form>
+
+      <p class="mt-2 text-center"><a href="/profile">&larr; Go Back</a></p>
+    </div>
+  </main>
+</body>
+</html>
