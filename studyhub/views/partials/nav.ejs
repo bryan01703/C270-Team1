@@ -1,0 +1,10 @@
+<nav>
+  <a href="/" class="brand">Study<span>Hub</span></a>
+  <% if (locals.userId) { %>
+    <a href="/profile">Profile</a>
+    <a href="/auth/logout">Logout</a>
+  <% } else { %>
+    <a href="/login">Login</a>
+    <a href="/register">Sign Up</a>
+  <% } %>
+</nav>

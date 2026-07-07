@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard - StudyHub</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/nav') %>
+  <main>
+    <div class="card">
+      <h1>Admin Dashboard</h1>
+      <p class="mb-2" style="color:#666;">Welcome, <%= user.full_name %>. Manage faculty accounts below.</p>
+
+      <% if (locals.success) { %>
+        <div class="alert alert-success"><%= success %></div>
+      <% } %>
+      <% if (locals.error) { %>
+        <div class="alert alert-error"><%= error %></div>
+      <% } %>
+
+      <hr class="mb-2">
+
+      <h2 class="mb-1">Provision Faculty Account</h2>
+      <p style="color:#666; font-size:0.9rem; margin-bottom:1rem;">Create a new Teacher account with their assigned module class codes.</p>
+
+      <form action="/admin/create-teacher" method="POST">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" placeholder="e.g. jane.teacher" required>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Temporary Password</label>
+          <input type="password" id="password" name="password" placeholder="Set a temporary password" required>
+        </div>
+
+        <div class="form-group">
+          <label for="full_name">Full Name</label>
+          <input type="text" id="full_name" name="full_name" placeholder="e.g. Jane Smith" required>
+        </div>
+
+        <div class="form-group">
+          <label>Assign Module Class Codes</label>
+          <div class="module-select-group">
+            <div class="module-select-item">
+              <label for="class_codes_C237">C237 — Software Application Development</label>
+              <select id="class_codes_C237" name="class_codes_C237">
+                <option value="">-- Not assigned --</option>
+                <option value="C237-010">C237-010</option>
+                <option value="C237-020">C237-020</option>
+                <option value="C237-030">C237-030</option>
+              </select>
+            </div>
+            <div class="module-select-item">
+              <label for="class_codes_C270">C270 — DevOps Essentials</label>
+              <select id="class_codes_C270" name="class_codes_C270">
+                <option value="">-- Not assigned --</option>
+                <option value="C270-010">C270-010</option>
+                <option value="C270-020">C270-020</option>
+              </select>
+            </div>
+            <div class="module-select-item">
+              <label for="class_codes_C304">C304 — Cloud Application Development</label>
+              <select id="class_codes_C304" name="class_codes_C304">
+                <option value="">-- Not assigned --</option>
+                <option value="C304-010">C304-010</option>
+                <option value="C304-020">C304-020</option>
+              </select>
+            </div>
+            <div class="module-select-item">
+              <label for="class_codes_C218">C218 — UI/UX Design for Web & Mobile</label>
+              <select id="class_codes_C218" name="class_codes_C218">
+                <option value="">-- Not assigned --</option>
+                <option value="C218-010">C218-010</option>
+                <option value="C218-020">C218-020</option>
+              </select>
+            </div>
+          </div>
+          <small class="helper-text">&#128161; Assign the class codes this teacher will be responsible for.</small>
+        </div>
+
+        <button type="submit" class="btn">Create Teacher Account</button>
+      </form>
+
+      <p class="mt-2 text-center"><a href="/profile">&larr; Back to Main Dashboard</a></p>
+    </div>
+  </main>
+</body>
+</html>

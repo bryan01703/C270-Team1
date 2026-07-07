@@ -1,0 +1,13 @@
+CREATE DATABASE IF NOT EXISTS studyhub;
+USE studyhub;
+
+CREATE TABLE IF NOT EXISTS users (
+  user_id INT AUTO_INCREMENT PRIMARY KEY,
+  username VARCHAR(50) UNIQUE NOT NULL,
+  password_hash VARCHAR(255) NOT NULL,
+  full_name VARCHAR(100) NOT NULL,
+  class_codes VARCHAR(255) DEFAULT '',
+  bio VARCHAR(500) DEFAULT '',
+  role_type VARCHAR(20) DEFAULT 'Student',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

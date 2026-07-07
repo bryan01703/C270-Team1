@@ -1,16 +1,55 @@
+require('dotenv').config();
+
 const express = require('express');
+const session = require('express-session');
+const path = require('path');
+
+const authRoutes = require('./routes/auth');
+const adminRoutes = require('./routes/admin');
+const taskRoutes = require('./routes/tasks');
+
 const app = express();
+const PORT = process.env.PORT || 3000;
 
 app.set('view engine', 'ejs');
-app.use(express.urlencoded({ extended: true }));
 
-const taskRoutes = require('./routes/tasks');
-app.use('/tasks', taskRoutes);
+app.use(express.urlencoded({ extended: false }));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'studyhub-dev-secret',
+  resave: false,
+  saveUninitialized: false,
+}));
 
-app.get('/', (req, res) => {
-    res.redirect('/tasks');
+app.use((req, res, next) => {
+  res.locals.userId = req.session.userId || null;
+  res.locals.userRole = req.session.user ? req.session.user.role_type : null;
+  next();
 });
 
-app.listen(3000, () => {
-    console.log('Server running on http://localhost:3000');
+app.use('/', authRoutes);
+app.use('/admin', adminRoutes);
+app.use('/', taskRoutes);
+
+app.get('/', (req, res) => {
+  if (req.session.userId) return res.redirect('/profile');
+  res.redirect('/login');
+});
+
+app.get('/login', (req, res) => {
+  if (req.session.userId) return res.redirect('/profile');
+  res.render('login', { title: 'Log In' });
+});
+
+app.get('/register', (req, res) => {
+  if (req.session.userId) return res.redirect('/profile');
+  res.render('register', { title: 'Sign Up' });
+});
+
+app.get('/unauthorized', (req, res) => {
+  res.status(403).render('unauthorized', { title: 'Access Denied' });
+});
+
+app.listen(PORT, () => {
+  console.log(`StudyHub running at http://localhost:${PORT}`);
 });
