@@ -281,3 +281,134 @@ hr {
 .profile-info span {
   color: #555;
 }
+
+
+/* ---- Study Group Board additions ---- */
+
+main.wide {
+  max-width: 900px;
+}
+
+.board-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.board-header h1 {
+  margin-bottom: 0;
+}
+
+.filter-bar {
+  display: flex;
+  align-items: center;
+}
+
+.listing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.listing-card {
+  display: block;
+  background: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 1rem;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.listing-card:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transform: translateY(-2px);
+}
+
+.listing-card h3 {
+  margin: 0.5rem 0 0.35rem;
+  color: #2c3e50;
+}
+
+.listing-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.listing-meta {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 0.15rem;
+}
+
+.module-tag {
+  display: inline-block;
+  background: #eaf4fc;
+  color: #2980b9;
+  font-weight: 600;
+  font-size: 0.8rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 12px;
+}
+
+.slots-tag {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #2e7d32;
+  background: #e8f5e9;
+  padding: 0.15rem 0.6rem;
+  border-radius: 12px;
+}
+
+.slots-tag.slots-full {
+  color: #c62828;
+  background: #fce4ec;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.action-buttons form {
+    margin: 0;
+}
+
+.action-buttons .btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+
+    min-width: 180px;
+    height: 44px;
+
+    text-decoration: none;
+    box-sizing: border-box;
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 24px;
+    color: #2563eb;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.back-link:hover {
+    text-decoration: underline;
+}
+
+.btn-secondary {
+    background: #6c757d;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}

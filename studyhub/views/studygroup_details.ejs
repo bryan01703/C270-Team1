@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> - StudyHub</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/nav') %>
+  <main>
+    <div class="card">
+    <a href="/studygroups" class="back-link">
+        ← Back to Study Groups
+    </a>
+    <div class="mb-3">
+        <span class="module-tag"><%= group.module_code %></span>
+    </div>
+    <h1 class="mt-1"><%= group.group_name %></h1>
+
+      <div class="profile-info mb-2 mt-1">
+        <p><strong>Date:</strong> <span><%= new Date(group.session_date).toLocaleDateString() %></span></p>
+        <p><strong>Time:</strong> <span><%= group.session_time %></span></p>
+        <p><strong>Location:</strong> <span><%= group.location %></span></p>
+        <% if (group.session_link) { %>
+          <p><strong>Link:</strong> <span><a href="<%= group.session_link %>" target="_blank" rel="noopener"><%= group.session_link %></a></span></p>
+        <% } %>
+        <p><strong>Hosted by:</strong> <span><%= group.host_name %></span></p>
+        <p><strong>Slots:</strong> <span><%= group.member_count %> / <%= group.max_slots %> filled</span></p>
+      </div>
+
+      <% if (group.description) { %>
+        <p class="mb-2"><%= group.description %></p>
+      <% } %>
+
+      <hr class="mb-2">
+
+      <h2 class="mb-1">Members (<%= members.length %>)</h2>
+      <% if (members.length === 0) { %>
+        <p style="color:#777;" class="mb-2">No one has joined yet.</p>
+      <% } else { %>
+        <ul class="mb-2" style="padding-left: 1.25rem;">
+          <% members.forEach(function(m) { %>
+            <li><%= m.full_name %></li>
+          <% }) %>
+        </ul>
+      <% } %>
+      
+      <div class="role-actions">
+        <% if (isHost) { %>
+          <span class="role-badge role-teacher">You're hosting this session</span>
+        <% } else if (isJoined) { %>
+          <form action="/studygroups/<%= group.group_id %>/leave" method="POST">
+            <button type="submit" class="btn btn-danger">Leave Session</button>
+          </form>
+        <% } else if (group.member_count >= group.max_slots) { %>
+          <span class="role-badge role-admin">Full</span>
+        <% } else { %>
+          <form action="/studygroups/<%= group.group_id %>/join" method="POST">
+            <button type="submit" class="btn">Join Session</button>
+          </form>
+        <% } %>
+
+        <% if (canDelete) { %>
+        <div class="action-buttons">
+          <a href="/studygroups/<%= group.group_id %>/edit" class="btn">
+            Edit Study Group
+          </a>
+          <form action="/studygroups/<%= group.group_id %>/delete" method="POST"
+            onsubmit="return confirm('Delete this listing?');">
+            <button type="submit" class="btn btn-danger">
+              Delete Listing
+            </button>
+
+          </form>
+
+        </div>
+
+        <% } %>
+    </div>
+  </main>
+</body>
+</html>
