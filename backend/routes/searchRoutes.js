@@ -1,0 +1,1 @@
+const r=require('express').Router(); const c=require('../controllers/searchController'); r.get('/',c.search); module.exports=r;

@@ -1,0 +1,1 @@
+exports.uploadFile=async(req,res)=>res.json({file:req.file});

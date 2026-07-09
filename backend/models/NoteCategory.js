@@ -1,0 +1,1 @@
+const {DataTypes}=require('sequelize'); const db=require('../config/db'); module.exports=db.define('NoteCategory',{name:DataTypes.STRING,description:DataTypes.TEXT});

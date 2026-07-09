@@ -1,0 +1,1 @@
+exports.getReviews=async(req,res)=>res.json([]);

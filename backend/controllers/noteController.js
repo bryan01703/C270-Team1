@@ -1,0 +1,1 @@
+exports.getNotes=async(req,res)=>res.json([]);

@@ -3,6 +3,10 @@ const path = require('path');
 
 const app = express();
 const port = process.env.PORT || 3000;
+const db = require('./backend/db'); // Import the database connection
+
+// Export the promise-based pool for cleaner async/await code
+module.exports = pool.promise();
 
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));

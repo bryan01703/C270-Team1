@@ -1,0 +1,1 @@
+exports.getTutors=async(req,res)=>res.json([]);

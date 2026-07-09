@@ -1,0 +1,1 @@
+const {DataTypes}=require('sequelize'); const db=require('../config/db'); module.exports=db.define('TutorSubject',{name:DataTypes.STRING,level:DataTypes.STRING});
