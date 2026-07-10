@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> - StudyHub</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/nav') %>
+  <main>
+    <div class="card">
+      <h1>Post a Study Session</h1>
+
+      <% if (locals.error) { %>
+        <div class="alert alert-error"><%= error %></div>
+      <% } %>
+
+      <% var f = locals.form || {}; %>
+      <form action="/studygroups" method="POST">
+        <div class="form-group">
+          <label for="group_name">Session Title</label>
+          <input type="text" id="group_name" name="group_name" placeholder="e.g. CA2 Revision Group" value="<%= f.group_name || '' %>" required>
+        </div>
+
+        <div class="form-group">
+          <label for="module_code">Module</label>
+          <select id="module_code" name="module_code" required>
+            <option value="">-- Select module --</option>
+            <% modules.forEach(function(m) { %>
+              <option value="<%= m.code %>" <%= f.module_code === m.code ? 'selected' : '' %>><%= m.code %> — <%= m.name %></option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="session_date">Date</label>
+          <input type="date" id="session_date" name="session_date" value="<%= f.session_date || '' %>" required>
+        </div>
+
+        <div class="form-group">
+          <label for="session_time">Time</label>
+          <input type="text" id="session_time" name="session_time" placeholder="e.g. 2:00 PM" value="<%= f.session_time || '' %>" required>
+        </div>
+
+        <div class="form-group">
+          <label for="location">Location</label>
+          <input type="text" id="location" name="location" placeholder="e.g. Library, Lab 2, or online" value="<%= f.location || '' %>" required>
+        </div>
+
+        <div class="form-group">
+          <label for="session_link">Online Link (optional)</label>
+          <input type="text" id="session_link" name="session_link" placeholder="e.g. Zoom / Teams link" value="<%= f.session_link || '' %>">
+        </div>
+
+        <div class="form-group">
+          <label for="max_slots">Slots Available</label>
+          <input type="number" id="max_slots" name="max_slots" min="1" max="50" value="<%= f.max_slots || 4 %>" required>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description (optional)</label>
+          <textarea id="description" name="description" rows="3" placeholder="What will you be covering?"><%= f.description || '' %></textarea>
+        </div>
+
+        <button type="submit" class="btn">Post Session</button>
+      </form>
+
+      <p class="mt-2 text-center"><a href="/studygroups">&larr; Back to Board</a></p>
+    </div>
+  </main>
+</body>
+</html>
