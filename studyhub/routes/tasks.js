@@ -4,19 +4,14 @@ const pool = require('../config/db');
 const { requireAuth } = require('../middleware/auth');
 
 const VALID_MODULES = [
-  // General
   'G121', 'G123', 'G124', 'G125', 'G131', 'G132', 'G133', 'G134', 'G135',
-  // Discipline
   'C110', 'C112', 'C206', 'C207', 'C210', 'C227', 'C235', 'C237', 'C240', 'E123',
-  // Major (Full Stack)
   'C218', 'C245', 'C257', 'C270', 'C304', 'C339', 'C346', 'C390',
 ];
 
 const VALID_STATUSES = ['Not Started', 'In Progress', 'Done'];
-
 const VALID_TASK_TYPES = ['Assignment', 'Certification', 'To-Do', 'Quiz', 'Project'];
 
-// View all tasks
 router.get('/tasks', requireAuth, async (req, res) => {
   try {
     const { status, module: modFilter } = req.query;
@@ -43,6 +38,7 @@ router.get('/tasks', requireAuth, async (req, res) => {
       VALID_MODULES,
       VALID_STATUSES,
       VALID_TASK_TYPES,
+      userModules: VALID_MODULES,
       selectedStatus: status || '',
       selectedModule: modFilter || '',
     });
@@ -54,6 +50,7 @@ router.get('/tasks', requireAuth, async (req, res) => {
       VALID_MODULES,
       VALID_STATUSES,
       VALID_TASK_TYPES,
+      userModules: VALID_MODULES,
       selectedStatus: '',
       selectedModule: '',
       error: 'Failed to load tasks.',
@@ -61,7 +58,6 @@ router.get('/tasks', requireAuth, async (req, res) => {
   }
 });
 
-// Add task
 router.post('/tasks/add', requireAuth, async (req, res) => {
   const { title, module: mod, due_date, status, task_type } = req.body;
   const errors = [];
@@ -88,6 +84,7 @@ router.post('/tasks/add', requireAuth, async (req, res) => {
       VALID_MODULES,
       VALID_STATUSES,
       VALID_TASK_TYPES,
+      userModules: VALID_MODULES,
       selectedStatus: '',
       selectedModule: '',
       error: errors.join(' '),
@@ -107,7 +104,6 @@ router.post('/tasks/add', requireAuth, async (req, res) => {
   }
 });
 
-// Edit task - show form
 router.get('/tasks/edit/:id', requireAuth, async (req, res) => {
   try {
     const [rows] = await pool.execute(
@@ -129,7 +125,6 @@ router.get('/tasks/edit/:id', requireAuth, async (req, res) => {
   }
 });
 
-// Edit task - submit
 router.post('/tasks/edit/:id', requireAuth, async (req, res) => {
   const { title, module: mod, due_date, status, task_type } = req.body;
   const errors = [];
@@ -168,7 +163,6 @@ router.post('/tasks/edit/:id', requireAuth, async (req, res) => {
   }
 });
 
-// Delete task
 router.post('/tasks/delete/:id', requireAuth, async (req, res) => {
   try {
     await pool.execute(

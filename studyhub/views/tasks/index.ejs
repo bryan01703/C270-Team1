@@ -3,151 +3,366 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title><%= title %> - StudyHub</title>
+  <title>My Tasks - StudyHub</title>
   <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .tasks-page {
+      max-width: 1200px;
+      margin: 2rem auto;
+      padding: 0 2rem;
+    }
+
+    .tasks-page h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+    }
+
+    .tasks-page .subtitle {
+      color: #6b7280;
+      font-size: 0.9rem;
+      margin-bottom: 2rem;
+    }
+
+    .tasks-grid {
+      display: grid;
+      grid-template-columns: 340px 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    /* ── Add Task Form ── */
+    .add-task-box {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      padding: 1.5rem;
+      position: sticky;
+      top: 1.5rem;
+    }
+
+    .box-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin: 0 0 1.2rem;
+      padding-left: 0.75rem;
+      border-left: 4px solid #6366f1;
+    }
+
+    .f-group { margin-bottom: 0.9rem; }
+
+    .f-group label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #374151;
+      margin-bottom: 0.3rem;
+    }
+
+    .f-group input,
+    .f-group select {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      background: #f9fafb;
+      box-sizing: border-box;
+      transition: border-color 0.15s;
+    }
+
+    .f-group input:focus,
+    .f-group select:focus {
+      outline: none;
+      border-color: #6366f1;
+      background: #fff;
+    }
+
+    .f-group small { font-size: 0.72rem; color: #9ca3af; margin-top: 0.2rem; display: block; }
+
+    .btn-submit {
+      width: 100%;
+      padding: 0.65rem;
+      background: #6366f1;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 0.5rem;
+    }
+
+    .btn-submit:hover { background: #4f46e5; }
+
+    /* ── Task List ── */
+    .task-list-box {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+      padding: 1.5rem;
+    }
+
+    .filter-bar {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1.2rem;
+      flex-wrap: wrap;
+    }
+
+    .filter-bar select {
+      padding: 0.45rem 0.75rem;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      background: #f9fafb;
+      cursor: pointer;
+    }
+
+    .btn-clear {
+      padding: 0.45rem 0.9rem;
+      background: #f3f4f6;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      text-decoration: none;
+      color: #374151;
+    }
+
+    /* ── Task Cards ── */
+    .task-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem 1.2rem;
+      margin-bottom: 0.75rem;
+      background: #f9fafb;
+      border-radius: 10px;
+      border-left: 4px solid #e5e7eb;
+      transition: box-shadow 0.15s;
+    }
+
+    .task-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.09); }
+    .task-card.overdue { border-left-color: #ef4444; background: #fff5f5; }
+    .task-card.due-soon { border-left-color: #f59e0b; background: #fffbf0; }
+    .task-card.done { border-left-color: #10b981; opacity: 0.65; }
+
+    .task-info { flex: 1; min-width: 0; }
+
+    .task-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #111827;
+      margin: 0 0 0.4rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .task-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; }
+
+    .tag {
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.18rem 0.55rem;
+      border-radius: 20px;
+      letter-spacing: 0.03em;
+    }
+
+    .tag-mod { background: #ede9fe; color: #5b21b6; }
+    .tag-type { background: #e0f2fe; color: #0369a1; }
+    .tag-ns { background: #f3f4f6; color: #6b7280; }
+    .tag-ip { background: #fef3c7; color: #92400e; }
+    .tag-done { background: #d1fae5; color: #065f46; }
+    .tag-overdue { background: #fee2e2; color: #991b1b; }
+    .tag-soon { background: #fef3c7; color: #92400e; }
+
+    .task-date { font-size: 0.78rem; color: #6b7280; white-space: nowrap; }
+
+    .task-actions { display: flex; gap: 0.4rem; flex-shrink: 0; }
+
+    .btn-edit {
+      padding: 0.35rem 0.7rem;
+      background: #f3f4f6;
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      text-decoration: none;
+      color: #374151;
+    }
+
+    .btn-edit:hover { background: #e5e7eb; }
+
+    .btn-del {
+      padding: 0.35rem 0.7rem;
+      background: #fff;
+      border: 1px solid #fca5a5;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #ef4444;
+      cursor: pointer;
+    }
+
+    .btn-del:hover { background: #fee2e2; }
+
+    .empty {
+      text-align: center;
+      padding: 3rem;
+      color: #9ca3af;
+      font-size: 0.95rem;
+    }
+
+    .alert-error {
+      background: #fee2e2;
+      border-left: 4px solid #ef4444;
+      color: #991b1b;
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+    }
+  </style>
 </head>
 <body>
   <%- include('../partials/nav') %>
-  <main>
-    <div class="card">
-      <h1>My Tasks</h1>
 
-      <% if (locals.error) { %>
-        <div class="alert alert-error"><%= error %></div>
-      <% } %>
-      <% if (locals.success) { %>
-        <div class="alert alert-success"><%= success %></div>
-      <% } %>
+  <div class="tasks-page">
+    <h1>My Tasks</h1>
+    <p class="subtitle">Track your assignments, certifications and deadlines.</p>
 
-      <!-- Add Task Form -->
-      <h2 class="mb-1">Add New Task</h2>
-      <form action="/tasks/add" method="POST" class="mb-2">
-        <div class="form-group">
-          <label for="title">Task Title *</label>
-          <input type="text" id="title" name="title" maxlength="100" required
-            placeholder="e.g. Complete CA2 Report"
-            value="<%= locals.form ? form.title || '' : '' %>">
-          <small class="helper-text">Max 100 characters</small>
-        </div>
+    <% if (locals.error) { %>
+      <div class="alert-error"><%= error %></div>
+    <% } %>
 
-        <div class="form-group">
-          <label for="task_type">Task Type *</label>
-          <select id="task_type" name="task_type" required>
-            <option value="">-- Select type --</option>
-            <% VALID_TASK_TYPES.forEach(t => { %>
-              <option value="<%= t %>" <%= locals.form && form.task_type === t ? 'selected' : '' %>><%= t %></option>
-            <% }) %>
-          </select>
-        </div>
+    <% if (userModules.length === 0) { %>
+      <div class="alert-error">
+        No modules set up. Please <a href="/profile">update your profile</a> with your class codes first.
+      </div>
+    <% } else { %>
 
-        <div class="form-group">
-          <label for="module">Module *</label>
-          <select id="module" name="module" required>
-            <option value="">-- Select module --</option>
-            <% VALID_MODULES.forEach(mod => { %>
-              <option value="<%= mod %>" <%= locals.form && form.module === mod ? 'selected' : '' %>><%= mod %></option>
-            <% }) %>
-          </select>
-        </div>
+    <div class="tasks-grid">
 
-        <div class="form-group">
-          <label for="due_date">Due Date *</label>
-          <input type="date" id="due_date" name="due_date" required
-            min="<%= new Date().toISOString().split('T')[0] %>"
-            value="<%= locals.form ? form.due_date || '' : '' %>">
-        </div>
+      <!-- Left: Add Task -->
+      <div class="add-task-box">
+        <p class="box-title">Add New Task</p>
+        <form action="/tasks/add" method="POST">
 
-        <div class="form-group">
-          <label for="status">Status *</label>
-          <select id="status" name="status" required>
+          <div class="f-group">
+            <label>Task Title</label>
+            <input type="text" name="title" maxlength="100" required
+              placeholder="e.g. Complete CA2 Report"
+              value="<%= locals.form ? form.title || '' : '' %>">
+            <small>Max 100 characters</small>
+          </div>
+
+          <div class="f-group">
+            <label>Task Type</label>
+            <select name="task_type" required>
+              <option value="">-- Select type --</option>
+              <% VALID_TASK_TYPES.forEach(t => { %>
+                <option value="<%= t %>" <%= locals.form && form.task_type === t ? 'selected' : '' %>><%= t %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="f-group">
+            <label>Module</label>
+            <select name="module" required>
+              <option value="">-- Select module --</option>
+              <% VALID_MODULES.forEach(mod => { %>
+                <option value="<%= mod %>" <%= locals.form && form.module === mod ? 'selected' : '' %>><%= mod %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <div class="f-group">
+            <label>Due Date</label>
+            <input type="date" name="due_date" required
+              min="<%= new Date().toISOString().split('T')[0] %>"
+              value="<%= locals.form ? form.due_date || '' : '' %>">
+          </div>
+
+          <div class="f-group">
+            <label>Status</label>
+            <select name="status" required>
+              <% VALID_STATUSES.forEach(s => { %>
+                <option value="<%= s %>" <%= locals.form && form.status === s ? 'selected' : '' %>><%= s %></option>
+              <% }) %>
+            </select>
+          </div>
+
+          <button type="submit" class="btn-submit">Add Task</button>
+        </form>
+      </div>
+
+      <!-- Right: Task List -->
+      <div class="task-list-box">
+        <p class="box-title">My Task List</p>
+
+        <form method="GET" action="/tasks" class="filter-bar">
+          <select name="status" onchange="this.form.submit()">
+            <option value="">All Statuses</option>
             <% VALID_STATUSES.forEach(s => { %>
-              <option value="<%= s %>" <%= locals.form && form.status === s ? 'selected' : '' %>><%= s %></option>
+              <option value="<%= s %>" <%= selectedStatus === s ? 'selected' : '' %>><%= s %></option>
             <% }) %>
           </select>
-        </div>
-
-        <button type="submit" class="btn">Add Task</button>
-      </form>
-
-      <hr class="mb-2">
-
-      <!-- Filter Bar -->
-      <h2 class="mb-1">My Task List</h2>
-      <form method="GET" action="/tasks" class="filter-bar mb-2">
-        <select name="status" onchange="this.form.submit()">
-          <option value="">All Statuses</option>
-          <% VALID_STATUSES.forEach(s => { %>
-            <option value="<%= s %>" <%= selectedStatus === s ? 'selected' : '' %>><%= s %></option>
-          <% }) %>
-        </select>
-        <select name="module" onchange="this.form.submit()">
-          <option value="">All Modules</option>
-          <% VALID_MODULES.forEach(mod => { %>
-            <option value="<%= mod %>" <%= selectedModule === mod ? 'selected' : '' %>><%= mod %></option>
-          <% }) %>
-        </select>
-        <% if (selectedStatus || selectedModule) { %>
-          <a href="/tasks" class="btn btn-secondary">Clear Filters</a>
-        <% } %>
-      </form>
-
-      <!-- Task Table -->
-      <% if (tasks.length === 0) { %>
-        <p class="text-center">No tasks found. Add one above!</p>
-      <% } else { %>
-        <table class="task-table">
-          <thead>
-            <tr>
-              <th>Task</th>
-              <th>Type</th>
-              <th>Module</th>
-              <th>Due Date</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% tasks.forEach(task => { %>
-              <%
-                const today = new Date(); today.setHours(0,0,0,0);
-                const due = new Date(task.due_date);
-                const diffDays = Math.ceil((due - today) / (1000*60*60*24));
-                let urgencyClass = '';
-                if (task.status !== 'Done') {
-                  if (diffDays < 0) urgencyClass = 'overdue';
-                  else if (diffDays <= 3) urgencyClass = 'due-soon';
-                }
-              %>
-              <tr class="<%= urgencyClass %>">
-                <td><%= task.title %></td>
-                <td><span class="badge badge-type"><%= task.task_type %></span></td>
-                <td><%= task.module %></td>
-                <td>
-                  <%= due.toLocaleDateString('en-SG', { day: '2-digit', month: 'short', year: 'numeric' }) %>
-                  <% if (urgencyClass === 'overdue') { %>
-                    <span class="badge badge-danger">Overdue</span>
-                  <% } else if (urgencyClass === 'due-soon') { %>
-                    <span class="badge badge-warning">Due Soon</span>
-                  <% } %>
-                </td>
-                <td>
-                  <span class="badge badge-status badge-<%= task.status.toLowerCase().replace(' ', '-') %>">
-                    <%= task.status %>
-                  </span>
-                </td>
-                <td class="action-btns">
-                  <a href="/tasks/edit/<%= task.task_id %>" class="btn btn-sm">Edit</a>
-                  <form action="/tasks/delete/<%= task.task_id %>" method="POST" style="display:inline"
-                    onsubmit="return confirm('Delete this task?')">
-                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                  </form>
-                </td>
-              </tr>
+          <select name="module" onchange="this.form.submit()">
+            <option value="">All Modules</option>
+            <% VALID_MODULES.forEach(mod => { %>
+              <option value="<%= mod %>" <%= selectedModule === mod ? 'selected' : '' %>><%= mod %></option>
             <% }) %>
-          </tbody>
-        </table>
-      <% } %>
+          </select>
+          <% if (selectedStatus || selectedModule) { %>
+            <a href="/tasks" class="btn-clear">Clear</a>
+          <% } %>
+        </form>
+
+        <% if (tasks.length === 0) { %>
+          <div class="empty">No tasks yet — add one on the left!</div>
+        <% } else { %>
+          <% tasks.forEach(task => { %>
+            <%
+              const today = new Date(); today.setHours(0,0,0,0);
+              const due = new Date(task.due_date);
+              const diffDays = Math.ceil((due - today) / (1000*60*60*24));
+              let cardClass = '';
+              if (task.status === 'Done') cardClass = 'done';
+              else if (diffDays < 0) cardClass = 'overdue';
+              else if (diffDays <= 3) cardClass = 'due-soon';
+              const statusTag = task.status === 'Not Started' ? 'tag-ns' : task.status === 'In Progress' ? 'tag-ip' : 'tag-done';
+            %>
+            <div class="task-card <%= cardClass %>">
+              <div class="task-info">
+                <p class="task-title"><%= task.title %></p>
+                <div class="task-tags">
+                  <span class="tag tag-mod"><%= task.module %></span>
+                  <span class="tag tag-type"><%= task.task_type %></span>
+                  <span class="tag <%= statusTag %>"><%= task.status %></span>
+                  <% if (cardClass === 'overdue') { %><span class="tag tag-overdue">Overdue</span><% } %>
+                  <% if (cardClass === 'due-soon') { %><span class="tag tag-soon">Due Soon</span><% } %>
+                </div>
+              </div>
+              <span class="task-date">
+                <%= due.toLocaleDateString('en-SG', { day: '2-digit', month: 'short', year: 'numeric' }) %>
+              </span>
+              <div class="task-actions">
+                <a href="/tasks/edit/<%= task.task_id %>" class="btn-edit">Edit</a>
+                <form action="/tasks/delete/<%= task.task_id %>" method="POST" style="margin:0"
+                  onsubmit="return confirm('Delete this task?')">
+                  <button type="submit" class="btn-del">Delete</button>
+                </form>
+              </div>
+            </div>
+          <% }) %>
+        <% } %>
+      </div>
+
     </div>
-  </main>
+    <% } %>
+  </div>
 </body>
 </html>
