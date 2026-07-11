@@ -4,92 +4,115 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><%= title %></title>
-    <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f6f9; color: #333; }
-        .container { max-width: 850px; margin: 0 auto; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px solid #e0e0e0; }
-        .header h1 { margin: 0; font-size: 1.8rem; color: #2c3e50; }
-        .btn { padding: 10px 18px; background: #007bff; color: white; text-decoration: none; border-radius: 6px; border: none; font-weight: 600; cursor: pointer; transition: background 0.2s; }
-        .btn:hover { background: #0056b3; }
-        .btn-danger { background: #dc3545; }
-        .btn-danger:hover { background: #c82333; }
-        .filter-card { background: white; padding: 15px; margin-bottom: 25px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-        .filter-form { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
-        .filter-form select, .filter-form input { padding: 10px; border-radius: 6px; border: 1px solid #ccc; font-size: 0.9rem; min-width: 150px; }
-        .announcement-card { background: white; padding: 24px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 3px 10px rgba(0,0,0,0.05); position: relative; border-left: 5px solid #007bff; }
-        .announcement-card h3 { margin: 0 0 8px 0; color: #2c3e50; font-size: 1.4rem; }
-        .meta { font-size: 0.88rem; color: #6c757d; margin-bottom: 15px; background: #f8f9fa; padding: 8px 12px; border-radius: 4px; display: inline-block; }
-        .content-body { line-white: 1.6; font-size: 1rem; white-space: pre-line; margin-bottom: 15px; color: #4a4a4a; }
-        .badge { padding: 4px 10px; border-radius: 20px; font-size: 0.78rem; font-weight: bold; text-transform: uppercase; }
-        .badge-High { background: #f8d7da; color: #721c24; border-left: 5px solid #dc3545; }
-        .badge-Normal { background: #e2e3e5; color: #383d41; }
-        .badge-Low { background: #d4edda; color: #155724; }
-    </style>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/announcementstyling.css">
 </head>
 <body>
-    <div class="container">
-        
-        <div class="header">
-            <h1>📢 <%= title %></h1>
-            <% if (userRole === 'Teacher' || userRole === 'Admin') { %>
-                <a href="/announcements/new" class="btn">+ New Announcement</a>
-            <% } %>
-        </div>
+    <%- include('partials/nav') %>
 
-        <div class="filter-card">
-            <form action="/announcements" method="GET" class="filter-form">
-                <select name="module">
-                    <option value="">All Modules</option>
-                    <% modules.forEach(mod => { %>
-                        <option value="<%= mod.code %>" <%= filters.module === mod.code ? 'selected' : '' %>><%= mod.code %> - <%= mod.name %></option>
-                    <% }) %>
-                </select>
-
-                <select name="priority">
-                    <option value="">All Priorities</option>
-                    <option value="High" <%= filters.priority === 'High' ? 'selected' : '' %>>High</option>
-                    <option value="Normal" <%= filters.priority === 'Normal' ? 'selected' : '' %>>Normal</option>
-                    <option value="Low" <%= filters.priority === 'Low' ? 'selected' : '' %>>Low</option>
-                </select>
-
-                <input type="text" name="section" placeholder="Section (e.g. All, G2)" value="<%= filters.section %>">
-                
-                <button type="submit" class="btn">Filter</button>
-                <a href="/announcements" class="btn" style="background:#6c757d;">Reset</a>
-            </form>
-        </div>
-
-        <% if (announcements.length === 0) { %>
-            <div style="text-align: center; color: #888; padding: 40px 0;">
-                <h3>No announcements posted yet.</h3>
-                <p>Check back later or change your filter configuration options.</p>
+    <div class="page-content">
+            <div class="header">
+                <h1> <%= title %></h1>
+                <p class="header-subtitle">Module updates and class notices, all in one place.</p>
+                <% if (userRole === 'Teacher' || userRole === 'Admin') { %>
+                    <a href="/announcements/new" class="btn">+ New Announcement</a>
+                <% } %>
             </div>
-        <% } else { %>
-            <% announcements.forEach(item => { %>
-                <div class="announcement-card" style="<%= item.priority === 'High' ? 'border-left-color: #dc3545;' : '' %>">
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
-                        <h3><%= item.title %></h3>
-                        <span class="badge badge-<%= item.priority %>"><%= item.priority %> Priority</span>
-                    </div>
-                    
-                    <div class="meta">
-                        Posted by <strong><%= item.poster_name %></strong> (<%= item.poster_role %>) 
-                        &bull; Module: <strong><%= item.module_code %></strong> 
-                        &bull; Class Section: <strong><%= item.class_section %></strong>
-                    </div>
-                    
-                    <div class="content-body"><%= item.content %></div>
-                    
-                    <% if (userRole === 'Teacher' || userRole === 'Admin') { %>
-                        <div style="display: flex; justify-content: flex-end;">
-                            <form action="/announcements/<%= item.announcement_id %>/delete" method="POST">
-                                <button type="submit" class="btn btn-danger" style="padding: 6px 12px; font-size: 0.85rem;" onclick="return confirm('Are you certain you want to permanently delete this notice?')">Delete</button>
-                            </form>
-                        </div>
-                    <% } %>
+
+            <!-- filter bar - lets users narrow down the feed by module/priority/section -->
+            <div class="filter-card">
+                <div class="filter-chips">
+                    <a href="/announcements" class="filter-chip <%= !filters.module ? 'active' : '' %>">All</a>
+                    <% modules.forEach(mod => { %>
+                        <a href="/announcements?module=<%= mod.code %>" class="filter-chip <%= filters.module === mod.code ? 'active' : '' %>"><%= mod.code %></a>
+                    <% }) %>
                 </div>
-            <% }) %>
-        <% } %>
+            </div>
+
+            <div class="filter-card">
+                <form action="/announcements" method="GET" class="filter-form">
+                    <input type="hidden" name="module" value="<%= filters.module %>">
+
+                    <select name="priority">
+                        <option value="">All Priorities</option>
+                        <option value="High" <%= filters.priority === 'High' ? 'selected' : '' %>>High</option>
+                        <option value="Normal" <%= filters.priority === 'Normal' ? 'selected' : '' %>>Medium</option>
+                        <option value="Low" <%= filters.priority === 'Low' ? 'selected' : '' %>>Low</option>
+                    </select>
+
+                    <input type="text" name="section" placeholder="Section (e.g. All, G2)" value="<%= filters.section %>">
+
+                    <button type="submit" class="btn">Filter</button>
+                    <a href="/announcements" class="btn btn-secondary">Reset</a>
+                </form>
+            </div>
+
+            <!-- if there's nothing to show, just say so instead of an empty page -->
+            <% if (announcements.length === 0) { %>
+                <div class="empty-state">
+                    <h3>No announcements posted yet.</h3>
+                    <p>Check back later or change your filter configuration options.</p>
+                </div>
+            <% } else { %>
+                <div class="announcement-grid">
+                    <% announcements.forEach((item, index) => { %>
+                        <div class="announcement-card" style="<%= item.priority === 'High' ? 'border-left-color: #dc3545;' : '' %>" onclick="openModal(<%= index %>)">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                                <h3><%= item.title %></h3>
+                                <span class="badge badge-<%= item.priority %>"><%= item.priority %></span>
+                            </div>
+                            <p class="preview-text"><%= item.content %></p>
+                        </div>
+                    <% }) %>
+                </div>
+
+                <div class="modal-overlay" id="announcementModal">
+                    <div class="modal-box">
+                        <button class="modal-close" onclick="closeModal()">&times;</button>
+                        <div id="modalContent"></div>
+                    </div>
+                </div>
+            <% } %>
+
+
+                <script>
+                // store all announcement data here so JS can pull it into the modal on click
+                const announcementData = <%- JSON.stringify(announcements) %>;
+                const userRole = "<%= userRole %>";
+
+                function openModal(index) {
+                    const item = announcementData[index];
+                    const canDelete = (userRole === 'Teacher' || userRole === 'Admin');
+
+                    document.getElementById('modalContent').innerHTML = `
+                    <div class="modal-header">
+                        <p class="modal-title">${item.title}</p>
+                        <span class="modal-priority-badge ${item.priority}">${item.priority}</span>
+                    </div>
+                    <div class="modal-chip-row">
+                        <span class="modal-chip">${item.module_code}</span>
+                        <span class="modal-chip">${new Date(item.created_at).toLocaleString()}</span>
+                    </div>
+                    <div class="modal-body-text">${item.content}</div>
+                    ${canDelete ? `
+                        <form action="/announcements/${item.announcement_id}/delete" method="POST" onsubmit="return confirm('Delete this announcement?')">
+                        <button type="submit" class="modal-btn-delete">Delete</button>
+                        </form>` : ''}
+                    `;
+
+                    document.getElementById('announcementModal').classList.add('active');
+                }
+
+                function closeModal() {
+                    document.getElementById('announcementModal').classList.remove('active');
+                }
+
+                // click outside the box also closes it
+                document.getElementById('announcementModal').addEventListener('click', function(e) {
+                    if (e.target === this) closeModal();
+                });
+                </script>
+
 
     </div>
 </body>

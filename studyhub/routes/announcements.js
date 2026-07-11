@@ -13,7 +13,7 @@ const MODULES = [
 
 // 1. BROWSE FEED (Accessible to all logged-in users)
 router.get('/announcements', requireAuth, async (req, res) => {
-  const { module, priority, section } = req.query;
+  const { module, priority, section, sort } = req.query;
   
   let query = `
     SELECT a.*, u.full_name AS poster_name, u.role_type AS poster_role
