@@ -6,6 +6,7 @@ const path = require('path');
 
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
+const taskRoutes = require('./routes/tasks');
 const studyGroupRoutes = require('./routes/studygroups');
 
 const app = express();
@@ -29,6 +30,7 @@ app.use((req, res, next) => {
 
 app.use('/', authRoutes);
 app.use('/admin', adminRoutes);
+app.use('/', taskRoutes);
 app.use('/', studyGroupRoutes);
 
 app.get('/', (req, res) => {
