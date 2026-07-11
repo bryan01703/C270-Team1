@@ -8,6 +8,7 @@ router.get('/home', requireAuth, async (req, res) => {
     const userId = req.session.userId;
     const today = new Date(); today.setHours(0,0,0,0);
     const nextWeek = new Date(today); nextWeek.setDate(today.getDate() + 7);
+    const todayStr = today.toISOString().split('T')[0];
 
     const [allTasks] = await pool.execute(
       'SELECT * FROM tasks WHERE user_id = ? ORDER BY due_date ASC',
@@ -23,6 +24,30 @@ router.get('/home', requireAuth, async (req, res) => {
     const total = allTasks.length;
     const upcomingTasks = allTasks.filter(t => t.status !== 'Done').slice(0, 5);
 
+    let officialDeadlines = [];
+    try {
+      const [rows] = await pool.execute(
+        `SELECT od.*, u.full_name AS created_by_name
+         FROM official_deadlines od
+         JOIN users u ON od.created_by = u.user_id
+         WHERE od.due_date >= ?
+         ORDER BY od.due_date ASC LIMIT 3`,
+        [todayStr]
+      );
+      officialDeadlines = rows;
+    } catch (e) {}
+
+    let announcements = [];
+    try {
+      const [rows] = await pool.execute(
+        `SELECT a.*, u.full_name AS poster_name 
+         FROM announcements a 
+         JOIN users u ON a.created_by = u.user_id 
+         ORDER BY a.created_at DESC LIMIT 3`
+      );
+      announcements = rows;
+    } catch (e) {}
+
     res.render('home', {
       title: 'Home',
       user: req.session.user,
@@ -31,6 +56,8 @@ router.get('/home', requireAuth, async (req, res) => {
       done,
       total,
       upcomingTasks,
+      officialDeadlines,
+      announcements,
     });
   } catch (err) {
     console.error('Home error:', err.message);
