@@ -1,0 +1,19 @@
+
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch feature/feed
+# Your branch is ahead of 'origin/feature/feed' by 9 commits.
+#   (use "git push" to publish your local commits)
+#
+# Changes to be committed:
+#	deleted:    .env.example
+#	modified:   app.js
+#	modified:   database/init.js
+#	modified:   database/init.sql
+#	modified:   routes/auth.js
+#	modified:   views/partials/nav.ejs
+#
+# Untracked files:
+#	../studyhub.zip
+#

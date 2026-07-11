@@ -12,8 +12,10 @@
 
     <div class="page-content">
             <div class="header">
-                <h1> <%= title %></h1>
-                <p class="header-subtitle">Module updates and class notices, all in one place.</p>
+                <div>
+                    <h1> <%= title %></h1>
+                    <p class="header-subtitle">Module updates and class notices, all in one place.</p>
+                </div>
                 <% if (userRole === 'Teacher' || userRole === 'Admin') { %>
                     <a href="/announcements/new" class="btn">+ New Announcement</a>
                 <% } %>
@@ -57,11 +59,17 @@
                 <div class="announcement-grid">
                     <% announcements.forEach((item, index) => { %>
                         <div class="announcement-card" style="<%= item.priority === 'High' ? 'border-left-color: #dc3545;' : '' %>" onclick="openModal(<%= index %>)">
-                            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                                <h3><%= item.title %></h3>
-                                <span class="badge badge-<%= item.priority %>"><%= item.priority %></span>
+                            <div class="announcement-card-body">
+                                <div class="card-title-row">
+                                    <h3><%= item.title %></h3>
+                                    <span class="badge badge-<%= item.priority %>"><%= item.priority %></span>
+                                </div>
+                                <div class="card-meta-row">
+                                    <span class="meta-chip"><%= item.module_code %></span>
+                                    <span class="meta-chip"><%= item.class_section %></span>
+                                </div>
+                                <p class="preview-text"><%= item.content %></p>
                             </div>
-                            <p class="preview-text"><%= item.content %></p>
                         </div>
                     <% }) %>
                 </div>
@@ -93,6 +101,7 @@
                         <span class="modal-chip">${item.module_code}</span>
                         <span class="modal-chip">${new Date(item.created_at).toLocaleString()}</span>
                     </div>
+                    <p class="modal-posted-by">Posted by ${item.poster_name} (${item.poster_role})</p>
                     <div class="modal-body-text">${item.content}</div>
                     ${canDelete ? `
                         <form action="/announcements/${item.announcement_id}/delete" method="POST" onsubmit="return confirm('Delete this announcement?')">

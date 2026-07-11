@@ -65,6 +65,23 @@ body {
     background: #fbd5d5;
 }
 
+.modal-btn-delete {
+    display: inline-block;
+    padding: 8px 20px;
+    border: none;
+    border-radius: 999px;
+    background: #dc3545;
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 12px;
+}
+
+.modal-btn-delete:hover {
+    background: #b91c1c;
+}
+
 /* filter bar - now chip style instead of dropdowns */
 .filter-card {
     background: white;
@@ -153,6 +170,33 @@ body {
     transform: translateY(-2px);
 }
 
+.announcement-card-body {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.card-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.card-meta-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+}
+
+.meta-chip {
+    font-size: 11px;
+    color: #94a3b8;
+    background: #f1f4f9;
+    padding: 2px 8px;
+    border-radius: 6px;
+}
+
 .announcement-card::before {
     content: '';
     width: 38px;
@@ -172,7 +216,7 @@ body {
 .announcement-card .preview-text {
     font-size: 13px;
     color: #64748b;
-    margin: 8px 0 0;
+    margin: 6px 0 0;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
@@ -319,6 +363,12 @@ body {
     font-size: 12px;
     padding: 5px 12px;
     border-radius: 8px;
+}
+
+.modal-posted-by {
+    font-size: 12px;
+    color: #94a3b8;
+    margin: 8px 0 0;
 }
 
 .modal-body-text {
