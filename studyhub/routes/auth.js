@@ -55,7 +55,7 @@ router.post('/auth/register', async (req, res) => {
 
     req.session.userId = user.user_id;
     req.session.user = user;
-    res.redirect('/profile');
+    res.redirect('/home');
   } catch (err) {
     console.error('Registration error:', err.message);
     res.render('register', {
@@ -109,7 +109,7 @@ router.post('/auth/login', async (req, res) => {
       created_at: user.created_at,
     };
 
-    res.redirect('/profile');
+    res.redirect('/home');
   } catch (err) {
     console.error('Login error:', err.message);
     res.render('login', {
