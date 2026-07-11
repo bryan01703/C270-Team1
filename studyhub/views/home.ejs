@@ -59,12 +59,45 @@
     <div class="main-grid">
 
       <div>
-        <!-- Upcoming Deadlines -->
+
+        <!-- Official Deadlines (pinned) -->
+        <% if (officialDeadlines && officialDeadlines.length > 0) { %>
+        <div class="card" style="background:#fff8f8; border: 1.5px solid #fecaca; margin-bottom: 1.2rem;">
+          <div class="card-header">
+            <div class="card-title">
+              <div class="card-title-dot" style="background:#ef4444"></div>
+              📌 Official Deadlines
+            </div>
+            <a href="/tasks" class="card-link" style="color:#ef4444">View all →</a>
+          </div>
+          <% officialDeadlines.forEach(od => { %>
+            <%
+              const today = new Date(); today.setHours(0,0,0,0);
+              const due = new Date(od.due_date);
+              const diff = Math.ceil((due - today) / (1000*60*60*24));
+              const dotClass = diff <= 3 ? 'red' : diff <= 7 ? 'yellow' : 'grey';
+              const badgeClass = diff <= 3 ? 'badge-red' : diff <= 7 ? 'badge-yellow' : 'badge-grey';
+              const badgeText = diff <= 3 ? 'Due Soon' : due.toLocaleDateString('en-SG', { day: '2-digit', month: 'short' });
+            %>
+            <div class="task-item" style="border: 1px solid #fecaca; background:#fff;">
+              <div class="task-dot <%= dotClass %>"></div>
+              <div class="task-info">
+                <div class="task-title"><%= od.title %></div>
+                <div class="task-meta"><%= od.module %> · <%= od.deadline_type %> · by <%= od.created_by_name %></div>
+              </div>
+              <span class="task-badge" style="background:#fee2e2; color:#991b1b; margin-right: 0.3rem;">📢 Official</span>
+              <span class="task-badge <%= badgeClass %>"><%= badgeText %></span>
+            </div>
+          <% }) %>
+        </div>
+        <% } %>
+
+        <!-- My Deadlines -->
         <div class="card">
           <div class="card-header">
             <div class="card-title">
               <div class="card-title-dot"></div>
-              Upcoming Deadlines
+              My Deadlines
             </div>
             <a href="/tasks" class="card-link">View all →</a>
           </div>
@@ -105,11 +138,25 @@
             </div>
             <a href="/announcements" class="card-link">View all →</a>
           </div>
-          <div class="empty">
-            <span class="empty-icon">📢</span>
-            No announcements yet — check back soon.
-          </div>
+          <% if (announcements && announcements.length > 0) { %>
+            <% announcements.forEach(a => { %>
+              <div class="task-item">
+                <div class="task-dot" style="background: <%= a.priority === 'High' ? '#ef4444' : a.priority === 'Medium' ? '#f59e0b' : '#94a3b8' %>"></div>
+                <div class="task-info">
+                  <div class="task-title"><%= a.title %></div>
+                  <div class="task-meta"><%= a.module_code %> · <%= a.poster_name %></div>
+                </div>
+                <span class="task-badge <%= a.priority === 'High' ? 'badge-red' : a.priority === 'Medium' ? 'badge-yellow' : 'badge-grey' %>"><%= a.priority %></span>
+              </div>
+            <% }) %>
+          <% } else { %>
+            <div class="empty">
+              <span class="empty-icon">📢</span>
+              No announcements yet — check back soon.
+            </div>
+          <% } %>
         </div>
+
       </div>
 
       <!-- Quick Links -->
