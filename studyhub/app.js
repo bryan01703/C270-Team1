@@ -8,6 +8,7 @@ const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
 const taskRoutes = require('./routes/tasks');
 const studyGroupRoutes = require('./routes/studygroups');
+const announcementsRoutes = require('./routes/announcements');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -32,6 +33,7 @@ app.use('/', authRoutes);
 app.use('/admin', adminRoutes);
 app.use('/', taskRoutes);
 app.use('/', studyGroupRoutes);
+app.use('/', announcementsRoutes);
 
 app.get('/', (req, res) => {
   if (req.session.userId) return res.redirect('/profile');

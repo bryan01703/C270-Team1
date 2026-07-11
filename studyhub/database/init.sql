@@ -1,3 +1,4 @@
+
 CREATE DATABASE IF NOT EXISTS studyhub;
 USE studyhub;
 
