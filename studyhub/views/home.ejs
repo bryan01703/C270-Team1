@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home - StudyHub</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/home.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <%- include('partials/nav') %>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-content">
+      <div class="hero-tag">🎓 Republic Polytechnic · School of Infocomm</div>
+      <h1 class="hero-title">Welcome back, <span><%= user.full_name.split(' ')[0] %></span> 👋</h1>
+      <p class="hero-sub">Here's your academic overview for today.</p>
+      <div class="hero-date" id="heroDate"></div>
+    </div>
+  </div>
+
+  <div class="home-page">
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-icon red">🔴</div>
+        <div class="stat-info">
+          <div class="stat-num"><%= overdue %></div>
+          <div class="stat-label">Overdue</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon yellow">⏰</div>
+        <div class="stat-info">
+          <div class="stat-num"><%= dueSoon %></div>
+          <div class="stat-label">Due This Week</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green">✅</div>
+        <div class="stat-info">
+          <div class="stat-num"><%= done %></div>
+          <div class="stat-label">Completed</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon blue">📋</div>
+        <div class="stat-info">
+          <div class="stat-num"><%= total %></div>
+          <div class="stat-label">Total Tasks</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Grid -->
+    <div class="main-grid">
+
+      <div>
+        <!-- Upcoming Deadlines -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <div class="card-title-dot"></div>
+              Upcoming Deadlines
+            </div>
+            <a href="/tasks" class="card-link">View all →</a>
+          </div>
+
+          <% if (upcomingTasks.length === 0) { %>
+            <div class="empty">
+              <span class="empty-icon">✅</span>
+              You're all clear — no upcoming tasks!
+            </div>
+          <% } else { %>
+            <% upcomingTasks.forEach(task => { %>
+              <%
+                const today = new Date(); today.setHours(0,0,0,0);
+                const due = new Date(task.due_date);
+                const diff = Math.ceil((due - today) / (1000*60*60*24));
+                const dotClass = diff < 0 ? 'red' : diff <= 3 ? 'yellow' : 'grey';
+                const badgeClass = diff < 0 ? 'badge-red' : diff <= 3 ? 'badge-yellow' : 'badge-grey';
+                const badgeText = diff < 0 ? 'Overdue' : diff <= 3 ? 'Due Soon' : due.toLocaleDateString('en-SG', { day: '2-digit', month: 'short' });
+              %>
+              <div class="task-item">
+                <div class="task-dot <%= dotClass %>"></div>
+                <div class="task-info">
+                  <div class="task-title"><%= task.title %></div>
+                  <div class="task-meta"><%= task.module %> · <%= task.task_type %></div>
+                </div>
+                <span class="task-badge <%= badgeClass %>"><%= badgeText %></span>
+              </div>
+            <% }) %>
+          <% } %>
+        </div>
+
+        <!-- Announcements -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <div class="card-title-dot" style="background:#f59e0b"></div>
+              Latest Announcements
+            </div>
+            <a href="/announcements" class="card-link">View all →</a>
+          </div>
+          <div class="empty">
+            <span class="empty-icon">📢</span>
+            No announcements yet — check back soon.
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <div class="card-title-dot" style="background:#10b981"></div>
+            Quick Links
+          </div>
+        </div>
+        <a href="/tasks" class="quick-link">
+          <div class="ql-icon ic-1">📋</div> My Tasks
+        </a>
+        <a href="/announcements" class="quick-link">
+          <div class="ql-icon ic-2">📢</div> Module Feed
+        </a>
+        <a href="/studygroups" class="quick-link">
+          <div class="ql-icon ic-3">👥</div> Study Groups
+        </a>
+        <a href="/marketplace" class="quick-link">
+          <div class="ql-icon ic-4">🛒</div> Marketplace
+        </a>
+        <a href="/profile" class="quick-link">
+          <div class="ql-icon ic-5">👤</div> My Profile
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const d = new Date();
+    document.getElementById('heroDate').textContent = d.toLocaleDateString('en-SG', {
+      weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'
+    });
+  </script>
+</body>
+</html>
