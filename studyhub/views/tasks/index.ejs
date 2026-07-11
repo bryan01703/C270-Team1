@@ -103,7 +103,10 @@
       border-radius: 12px;
       box-shadow: 0 2px 12px rgba(0,0,0,0.08);
       padding: 1.5rem;
+      margin-bottom: 1.5rem;
     }
+
+    .task-list-box:last-child { margin-bottom: 0; }
 
     .filter-bar {
       display: flex;
@@ -144,10 +147,16 @@
       transition: box-shadow 0.15s;
     }
 
+    .task-card:last-child { margin-bottom: 0; }
+
     .task-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.09); }
     .task-card.overdue { border-left-color: #ef4444; background: #fff5f5; }
     .task-card.due-soon { border-left-color: #f59e0b; background: #fffbf0; }
     .task-card.done { border-left-color: #10b981; opacity: 0.65; }
+
+    /* Certification cards get a distinct, non-urgent accent */
+    .task-card.cert { border-left-color: #8b5cf6; }
+    .task-card.cert.done { border-left-color: #10b981; }
 
     .task-info { flex: 1; min-width: 0; }
 
@@ -299,66 +308,108 @@
         </form>
       </div>
 
-      <!-- Right: Task List -->
-      <div class="task-list-box">
-        <p class="box-title">My Task List</p>
+      <!-- Right: Task Lists -->
+      <div>
 
-        <form method="GET" action="/tasks" class="filter-bar">
-          <select name="status" onchange="this.form.submit()">
-            <option value="">All Statuses</option>
-            <% VALID_STATUSES.forEach(s => { %>
-              <option value="<%= s %>" <%= selectedStatus === s ? 'selected' : '' %>><%= s %></option>
-            <% }) %>
-          </select>
-          <select name="module" onchange="this.form.submit()">
-            <option value="">All Modules</option>
-            <% VALID_MODULES.forEach(mod => { %>
-              <option value="<%= mod %>" <%= selectedModule === mod ? 'selected' : '' %>><%= mod %></option>
-            <% }) %>
-          </select>
-          <% if (selectedStatus || selectedModule) { %>
-            <a href="/tasks" class="btn-clear">Clear</a>
-          <% } %>
-        </form>
+        <% 
+          const assignmentTasks = tasks.filter(t => t.task_type !== 'Certification');
+          const certTasks = tasks.filter(t => t.task_type === 'Certification');
+        %>
 
-        <% if (tasks.length === 0) { %>
-          <div class="empty">No tasks yet — add one on the left!</div>
-        <% } else { %>
-          <% tasks.forEach(task => { %>
-            <%
-              const today = new Date(); today.setHours(0,0,0,0);
-              const due = new Date(task.due_date);
-              const diffDays = Math.ceil((due - today) / (1000*60*60*24));
-              let cardClass = '';
-              if (task.status === 'Done') cardClass = 'done';
-              else if (diffDays < 0) cardClass = 'overdue';
-              else if (diffDays <= 3) cardClass = 'due-soon';
-              const statusTag = task.status === 'Not Started' ? 'tag-ns' : task.status === 'In Progress' ? 'tag-ip' : 'tag-done';
-            %>
-            <div class="task-card <%= cardClass %>">
-              <div class="task-info">
-                <p class="task-title"><%= task.title %></p>
-                <div class="task-tags">
-                  <span class="tag tag-mod"><%= task.module %></span>
-                  <span class="tag tag-type"><%= task.task_type %></span>
-                  <span class="tag <%= statusTag %>"><%= task.status %></span>
-                  <% if (cardClass === 'overdue') { %><span class="tag tag-overdue">Overdue</span><% } %>
-                  <% if (cardClass === 'due-soon') { %><span class="tag tag-soon">Due Soon</span><% } %>
+        <!-- Assignments & Deadlines -->
+        <div class="task-list-box">
+          <p class="box-title">Assignments &amp; Deadlines</p>
+
+          <form method="GET" action="/tasks" class="filter-bar">
+            <select name="status" onchange="this.form.submit()">
+              <option value="">All Statuses</option>
+              <% VALID_STATUSES.forEach(s => { %>
+                <option value="<%= s %>" <%= selectedStatus === s ? 'selected' : '' %>><%= s %></option>
+              <% }) %>
+            </select>
+            <select name="module" onchange="this.form.submit()">
+              <option value="">All Modules</option>
+              <% VALID_MODULES.forEach(mod => { %>
+                <option value="<%= mod %>" <%= selectedModule === mod ? 'selected' : '' %>><%= mod %></option>
+              <% }) %>
+            </select>
+            <% if (selectedStatus || selectedModule) { %>
+              <a href="/tasks" class="btn-clear">Clear</a>
+            <% } %>
+          </form>
+
+          <% if (assignmentTasks.length === 0) { %>
+            <div class="empty">No assignments yet — add one on the left!</div>
+          <% } else { %>
+            <% assignmentTasks.forEach(task => { %>
+              <%
+                const today = new Date(); today.setHours(0,0,0,0);
+                const due = new Date(task.due_date);
+                const diffDays = Math.ceil((due - today) / (1000*60*60*24));
+                let cardClass = '';
+                if (task.status === 'Done') cardClass = 'done';
+                else if (diffDays < 0) cardClass = 'overdue';
+                else if (diffDays <= 3) cardClass = 'due-soon';
+                const statusTag = task.status === 'Not Started' ? 'tag-ns' : task.status === 'In Progress' ? 'tag-ip' : 'tag-done';
+              %>
+              <div class="task-card <%= cardClass %>">
+                <div class="task-info">
+                  <p class="task-title"><%= task.title %></p>
+                  <div class="task-tags">
+                    <span class="tag tag-mod"><%= task.module %></span>
+                    <span class="tag tag-type"><%= task.task_type %></span>
+                    <span class="tag <%= statusTag %>"><%= task.status %></span>
+                    <% if (cardClass === 'overdue') { %><span class="tag tag-overdue">Overdue</span><% } %>
+                    <% if (cardClass === 'due-soon') { %><span class="tag tag-soon">Due Soon</span><% } %>
+                  </div>
+                </div>
+                <span class="task-date">
+                  <%= due.toLocaleDateString('en-SG', { day: '2-digit', month: 'short', year: 'numeric' }) %>
+                </span>
+                <div class="task-actions">
+                  <a href="/tasks/edit/<%= task.task_id %>" class="btn-edit">Edit</a>
+                  <form action="/tasks/delete/<%= task.task_id %>" method="POST" style="margin:0"
+                    onsubmit="return confirm('Delete this task?')">
+                    <button type="submit" class="btn-del">Delete</button>
+                  </form>
                 </div>
               </div>
-              <span class="task-date">
-                <%= due.toLocaleDateString('en-SG', { day: '2-digit', month: 'short', year: 'numeric' }) %>
-              </span>
-              <div class="task-actions">
-                <a href="/tasks/edit/<%= task.task_id %>" class="btn-edit">Edit</a>
-                <form action="/tasks/delete/<%= task.task_id %>" method="POST" style="margin:0"
-                  onsubmit="return confirm('Delete this task?')">
-                  <button type="submit" class="btn-del">Delete</button>
-                </form>
+            <% }) %>
+          <% } %>
+        </div>
+
+        <!-- Certifications -->
+        <div class="task-list-box">
+          <p class="box-title">Certifications</p>
+
+          <% if (certTasks.length === 0) { %>
+            <div class="empty">No certifications tracked yet.</div>
+          <% } else { %>
+            <% certTasks.forEach(task => { %>
+              <%
+                const isDone = task.status === 'Done';
+                const statusTag = task.status === 'Not Started' ? 'tag-ns' : task.status === 'In Progress' ? 'tag-ip' : 'tag-done';
+              %>
+              <div class="task-card cert <%= isDone ? 'done' : '' %>">
+                <div class="task-info">
+                  <p class="task-title"><%= task.title %></p>
+                  <div class="task-tags">
+                    <span class="tag tag-mod"><%= task.module %></span>
+                    <span class="tag <%= statusTag %>"><%= task.status %></span>
+                  </div>
+                </div>
+                <div class="task-actions">
+                  <a href="/tasks/edit/<%= task.task_id %>" class="btn-edit">Edit</a>
+                  <form action="/tasks/delete/<%= task.task_id %>" method="POST" style="margin:0"
+                    onsubmit="return confirm('Delete this certification?')">
+                    <button type="submit" class="btn-del">Delete</button>
+                  </form>
+                </div>
               </div>
-            </div>
-          <% }) %>
-        <% } %>
+            <% }) %>
+          <% } %>
+        </div>
+
       </div>
 
     </div>
