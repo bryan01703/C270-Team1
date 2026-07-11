@@ -5,313 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Home - StudyHub</title>
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/home.css">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    * { font-family: 'Inter', sans-serif; }
-
-    body { background: #f1f5f9; margin: 0; }
-
-    /* ── Hero ── */
-    .hero {
-      background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #1a2456 100%);
-      padding: 0;
-      position: relative;
-      overflow: hidden;
-      min-height: 280px;
-      display: flex;
-      align-items: center;
-    }
-
-    .hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: url('https://isomer-user-content.by.gov.sg/397/08d0d8a0-53dc-40e3-b344-f436e0a5154d/sustainability-masthead-campus.jpg') center/cover no-repeat;
-      opacity: 0.5;
-    }
-
-    .hero::after {
-      content: '';
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 80px;
-      background: linear-gradient(to bottom, transparent, #f1f5f9);
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 2;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 3rem 2rem;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    .hero-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      background: rgba(99,102,241,0.3);
-      border: 1px solid rgba(99,102,241,0.5);
-      color: #a5b4fc;
-      font-size: 0.75rem;
-      font-weight: 600;
-      padding: 0.3rem 0.8rem;
-      border-radius: 20px;
-      margin-bottom: 1rem;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-    }
-
-    .hero-title {
-      font-size: 2.4rem;
-      font-weight: 800;
-      color: #fff;
-      margin: 0 0 0.6rem;
-      line-height: 1.15;
-    }
-
-    .hero-title span { color: #818cf8; }
-
-    .hero-sub {
-      font-size: 1rem;
-      color: #94a3b8;
-      margin: 0 0 1.5rem;
-    }
-
-    .hero-date {
-      font-size: 0.82rem;
-      color: #ffffff;
-      background: rgba(0,0,0,0.4);
-      border: 1px solid rgba(255,255,255,0.3);
-      padding: 0.35rem 0.9rem;
-      border-radius: 20px;
-      display: inline-block;
-    }
-
-    /* ── Page wrapper ── */
-    .home-page {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 1.5rem 2rem 3rem;
-    }
-
-    /* ── Stats ── */
-    .stats-row {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .stat-card {
-      background: #fff;
-      border-radius: 14px;
-      padding: 1.4rem 1.5rem;
-      box-shadow: 0 1px 8px rgba(0,0,0,0.06);
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      border: 1px solid #e2e8f0;
-    }
-
-    .stat-icon {
-      width: 46px;
-      height: 46px;
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.3rem;
-      flex-shrink: 0;
-    }
-
-    .stat-icon.red { background: #fee2e2; }
-    .stat-icon.yellow { background: #fef3c7; }
-    .stat-icon.green { background: #d1fae5; }
-    .stat-icon.blue { background: #e0e7ff; }
-
-    .stat-info {}
-
-    .stat-num {
-      font-size: 1.8rem;
-      font-weight: 800;
-      color: #0f172a;
-      line-height: 1;
-      margin-bottom: 0.2rem;
-    }
-
-    .stat-label {
-      font-size: 0.78rem;
-      color: #64748b;
-      font-weight: 500;
-    }
-
-    /* ── Main grid ── */
-    .main-grid {
-      display: grid;
-      grid-template-columns: 1fr 300px;
-      gap: 1.5rem;
-      align-items: start;
-    }
-
-    /* ── Cards ── */
-    .card {
-      background: #fff;
-      border-radius: 14px;
-      padding: 1.5rem;
-      box-shadow: 0 1px 8px rgba(0,0,0,0.06);
-      border: 1px solid #e2e8f0;
-      margin-bottom: 1.2rem;
-    }
-
-    .card:last-child { margin-bottom: 0; }
-
-    .card-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 1.2rem;
-    }
-
-    .card-title {
-      font-size: 0.9rem;
-      font-weight: 700;
-      color: #0f172a;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .card-title-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #6366f1;
-    }
-
-    .card-link {
-      font-size: 0.78rem;
-      color: #6366f1;
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    .card-link:hover { text-decoration: underline; }
-
-    /* ── Task items ── */
-    .task-item {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.75rem 0.9rem;
-      border-radius: 10px;
-      margin-bottom: 0.5rem;
-      background: #f8fafc;
-      border: 1px solid #f1f5f9;
-      transition: background 0.15s;
-    }
-
-    .task-item:hover { background: #f1f5f9; }
-    .task-item:last-child { margin-bottom: 0; }
-
-    .task-dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .task-dot.red { background: #ef4444; }
-    .task-dot.yellow { background: #f59e0b; }
-    .task-dot.grey { background: #cbd5e1; }
-
-    .task-info { flex: 1; min-width: 0; }
-
-    .task-title {
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #1e293b;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .task-meta {
-      font-size: 0.72rem;
-      color: #94a3b8;
-      margin-top: 0.1rem;
-    }
-
-    .task-badge {
-      font-size: 0.68rem;
-      font-weight: 700;
-      padding: 0.18rem 0.55rem;
-      border-radius: 20px;
-      flex-shrink: 0;
-    }
-
-    .badge-red { background: #fee2e2; color: #dc2626; }
-    .badge-yellow { background: #fef3c7; color: #d97706; }
-    .badge-grey { background: #f1f5f9; color: #64748b; }
-
-    /* ── Quick Links ── */
-    .quick-link {
-      display: flex;
-      align-items: center;
-      gap: 0.9rem;
-      padding: 0.85rem 1rem;
-      background: #f8fafc;
-      border-radius: 12px;
-      text-decoration: none;
-      color: #1e293b;
-      font-size: 0.88rem;
-      font-weight: 600;
-      border: 1px solid #f1f5f9;
-      margin-bottom: 0.5rem;
-      transition: all 0.15s;
-    }
-
-    .quick-link:last-child { margin-bottom: 0; }
-
-    .quick-link:hover {
-      background: #eef2ff;
-      border-color: #c7d2fe;
-      color: #4f46e5;
-      transform: translateX(3px);
-    }
-
-    .ql-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-    }
-
-    .ic-teal { background: #ccfbf1; }
-    .ic-yellow { background: #fef9c3; }
-    .ic-purple { background: #ede9fe; }
-    .ic-red { background: #ffe4e6; }
-    .ic-blue { background: #dbeafe; }
-
-    /* ── Empty ── */
-    .empty {
-      text-align: center;
-      padding: 2rem 1rem;
-      color: #94a3b8;
-      font-size: 0.88rem;
-    }
-
-    @media (max-width: 900px) {
-      .stats-row { grid-template-columns: repeat(2, 1fr); }
-      .main-grid { grid-template-columns: 1fr; }
-      .hero-title { font-size: 1.8rem; }
-    }
-  </style>
 </head>
 <body>
   <%- include('partials/nav') %>
@@ -375,7 +70,10 @@
           </div>
 
           <% if (upcomingTasks.length === 0) { %>
-            <div class="empty">You're all clear — no upcoming tasks! 🎉</div>
+            <div class="empty">
+              <span class="empty-icon">✅</span>
+              You're all clear — no upcoming tasks!
+            </div>
           <% } else { %>
             <% upcomingTasks.forEach(task => { %>
               <%
@@ -407,7 +105,10 @@
             </div>
             <a href="/announcements" class="card-link">View all →</a>
           </div>
-          <div class="empty">No announcements yet — check back soon.</div>
+          <div class="empty">
+            <span class="empty-icon">📢</span>
+            No announcements yet — check back soon.
+          </div>
         </div>
       </div>
 
@@ -420,19 +121,19 @@
           </div>
         </div>
         <a href="/tasks" class="quick-link">
-          <div class="ql-icon ic-teal">📋</div> My Tasks
+          <div class="ql-icon ic-1">📋</div> My Tasks
         </a>
         <a href="/announcements" class="quick-link">
-          <div class="ql-icon ic-yellow">📢</div> Module Feed
+          <div class="ql-icon ic-2">📢</div> Module Feed
         </a>
         <a href="/studygroups" class="quick-link">
-          <div class="ql-icon ic-purple">👥</div> Study Groups
+          <div class="ql-icon ic-3">👥</div> Study Groups
         </a>
         <a href="/marketplace" class="quick-link">
-          <div class="ql-icon ic-red">🛒</div> Marketplace
+          <div class="ql-icon ic-4">🛒</div> Marketplace
         </a>
         <a href="/profile" class="quick-link">
-          <div class="ql-icon ic-blue">👤</div> My Profile
+          <div class="ql-icon ic-5">👤</div> My Profile
         </a>
       </div>
 
