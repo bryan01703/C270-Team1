@@ -35,3 +35,13 @@ CREATE TABLE IF NOT EXISTS announcements (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (created_by) REFERENCES users(user_id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS announcement_audit (
+  audit_id INT AUTO_INCREMENT PRIMARY KEY,
+  announcement_id INT NOT NULL,
+  action VARCHAR(20) NOT NULL,
+  performed_by INT NOT NULL,
+  performed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  title_snapshot VARCHAR(255),
+  FOREIGN KEY (performed_by) REFERENCES users(user_id) ON DELETE CASCADE
+);

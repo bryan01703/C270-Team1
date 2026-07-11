@@ -3,7 +3,7 @@ const router = express.Router();
 const pool = require('../config/db');
 const { requireAuth, checkRole } = require('../middleware/auth');
 
-// Synchronized with module list
+// Synchronized with your team's module list
 const MODULES = [
   { code: 'C237', name: 'Software Application Development' },
   { code: 'C270', name: 'DevOps Essentials' },
@@ -11,7 +11,7 @@ const MODULES = [
   { code: 'C218', name: 'UI/UX Design for Web & Mobile' },
 ];
 
-// 1. BROWSE FEED (Everyone can access, handles filtering)
+// 1. BROWSE FEED (Accessible to all logged-in users)
 router.get('/announcements', requireAuth, async (req, res) => {
   const { module, priority, section } = req.query;
   
@@ -41,7 +41,7 @@ router.get('/announcements', requireAuth, async (req, res) => {
     query += " WHERE " + conditions.join(" AND ");
   }
 
-  // Sort by newest first
+  // Sort by newest entries first
   query += " ORDER BY a.created_at DESC";
 
   try {
@@ -51,7 +51,7 @@ router.get('/announcements', requireAuth, async (req, res) => {
       title: 'Announcement Feed',
       announcements,
       modules: MODULES,
-      userRole: req.session.user.role_type, // Used to toggle "Create/Delete" UI components
+      userRole: req.session.user ? req.session.user.role_type : 'Student', // Fallback safety
       filters: { module: module || '', priority: priority || '', section: section || '' }
     });
   } catch (err) {
@@ -82,22 +82,44 @@ router.post('/announcements', requireAuth, checkRole(['Teacher', 'Admin']), asyn
   }
 
   try {
-    await pool.execute(
+    // uses the session user active ID to attribute who posted it
+    const userId = req.session.userId || (req.session.user ? req.session.user.user_id : null);
+    
+    const [result] = await pool.execute(
       `INSERT INTO announcements (title, content, module_code, class_section, priority, created_by)
       VALUES (?, ?, ?, ?, ?, ?)`,
-      [title, content, module_code, class_section || 'All', priority || 'Normal', req.session.userId]
-    );
-    res.redirect('/announcements');
+      [title, content, module_code, class_section || 'All', priority || 'Normal', userId]
+);
+
+    await pool.execute(
+      `INSERT INTO announcement_audit (announcement_id, action, performed_by, title_snapshot)
+      VALUES (?, ?, ?, ?)`,
+      [result.insertId, 'CREATE', userId, title]
+);
+res.redirect('/announcements');
+
   } catch (err) {
     console.error('Create announcement error:', err.message);
     res.status(500).send('Failed to post announcement.');
   }
 });
 
-// 4. DELETE ANNOUNCEMENT (Teachers & Admins Only)
+// deleting announcements, Administrator/privileged acc only
 router.post('/announcements/:id/delete', requireAuth, checkRole(['Teacher', 'Admin']), async (req, res) => {
   const id = parseInt(req.params.id, 10);
+  const userId = req.session.userId || (req.session.user ? req.session.user.user_id : null);
+
   try {
+    const [rows] = await pool.execute('SELECT title FROM announcements WHERE announcement_id = ?', [id]);
+
+    if (rows.length > 0) {
+      await pool.execute(
+        `INSERT INTO announcement_audit (announcement_id, action, performed_by, title_snapshot)
+        VALUES (?, ?, ?, ?)`,
+        [id, 'DELETE', userId, rows[0].title]
+      );
+    }
+
     await pool.execute('DELETE FROM announcements WHERE announcement_id = ?', [id]);
     res.redirect('/announcements');
   } catch (err) {
