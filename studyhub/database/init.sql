@@ -82,3 +82,14 @@ CREATE TABLE IF NOT EXISTS study_group_members (
   FOREIGN KEY (group_id) REFERENCES study_groups(group_id) ON DELETE CASCADE,
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS certifications (
+  cert_id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  name VARCHAR(150) NOT NULL,
+  provider VARCHAR(100) NOT NULL,
+  status ENUM('In Progress', 'Completed') NOT NULL DEFAULT 'In Progress',
+  target_date DATE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+); 
