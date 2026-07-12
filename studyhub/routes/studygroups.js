@@ -5,10 +5,16 @@ const { requireAuth } = require('../middleware/auth');
 
 // Keep this in sync with the module list used on profile.ejs / admin_dashboard.ejs
 const MODULES = [
-  { code: 'C237', name: 'Software Application Development' },
+  { code: 'C218', name: 'UI/UX Design for Apps' },
+  { code: 'C240', name: 'AI Essentials and Innovations' },
+  { code: 'C245', name: 'Data Intelligence and Visualisation' },
+  { code: 'C246', name: 'Data Analytics with GenAI' },
+  { code: 'C257', name: 'Fundamentals of Design' },
   { code: 'C270', name: 'DevOps Essentials' },
   { code: 'C304', name: 'Cloud Application Development' },
-  { code: 'C218', name: 'UI/UX Design for Web & Mobile' },
+  { code: 'C339', name: 'Software Testing and Analytics' },
+  { code: 'C346', name: 'Mobile App Development' },
+  { code: 'C390', name: 'Portfolio Development' },
 ];
 
 async function fetchGroups(whereClause = '', params = []) {
