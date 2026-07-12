@@ -36,7 +36,7 @@
           <label for="module">Module *</label>
           <select id="module" name="module" required>
             <% VALID_MODULES.forEach(mod => { %>
-              <option value="<%= mod %>" <%= task.module === mod ? 'selected' : '' %>><%= mod %></option>
+             <option value="<%= mod.code %>" <%= task.module === mod.code ? 'selected' : '' %>><%= mod.code %> - <%= mod.name %></option>
             <% }) %>
           </select>
         </div>
