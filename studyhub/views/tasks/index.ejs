@@ -6,11 +6,11 @@
   <title>My Tasks - StudyHub</title>
   <link rel="stylesheet" href="/css/style.css">
   <style>
-    .tasks-page { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
+    .tasks-page { max-width: 1400px; margin: 2rem auto; padding: 0 1.5rem 3rem; }
     .tasks-page h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.3rem; }
     .tasks-page .subtitle { color: #6b7280; font-size: 0.9rem; margin-bottom: 2rem; }
-    .tasks-grid { display: grid; grid-template-columns: 340px 1fr; gap: 2rem; align-items: start; }
-    .add-task-box { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 1.5rem; position: sticky; top: 1.5rem; }
+    .tasks-grid { display: grid; grid-template-columns: 300px 1fr; gap: 1.5rem; align-items: start; }
+    .add-task-box { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 1.5rem;}
     .box-title { font-size: 1rem; font-weight: 700; margin: 0 0 1.2rem; padding-left: 0.75rem; border-left: 4px solid #6366f1; }
     .box-title.official { border-left-color: #ef4444; }
     .box-title.cert { border-left-color: #8b5cf6; }
@@ -174,7 +174,7 @@
       <!-- Right: Task Lists -->
       <div>
 
-        <!-- Official Deadlines (pinned at top) -->
+        <!-- Official Deadlines -->
         <div class="official-box">
           <p class="box-title official">📌 Official Deadlines</p>
           <% if (officialDeadlines.length === 0) { %>
@@ -217,10 +217,6 @@
           <% } %>
         </div>
 
-        <%
-          const assignmentTasks = tasks;
-        %>
-
         <!-- Personal Assignments -->
         <div class="task-list-box">
           <p class="box-title">📋 My Assignments & Deadlines</p>
@@ -242,10 +238,10 @@
             <% } %>
           </form>
 
-          <% if (assignmentTasks.length === 0) { %>
+          <% if (tasks.length === 0) { %>
             <div class="empty">No personal tasks yet — add one on the left!</div>
           <% } else { %>
-            <% assignmentTasks.forEach(task => { %>
+            <% tasks.forEach(task => { %>
               <%
                 const today = new Date(); today.setHours(0,0,0,0);
                 const due = new Date(task.due_date);
@@ -286,8 +282,6 @@
         <!-- Certifications -->
         <div class="task-list-box">
           <p class="box-title cert">🏆 Certifications</p>
-
-          <!-- Add Certification Form -->
           <div class="cert-form">
             <form action="/certifications/add" method="POST">
               <div class="f-group">
