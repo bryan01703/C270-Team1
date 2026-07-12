@@ -4,30 +4,9 @@ const pool = require('../config/db');
 const { requireAuth } = require('../middleware/auth');
 
 const VALID_MODULES = [
-  // General
-  { code: 'G121', name: 'Innovation and Practice' },
-  { code: 'G123', name: 'Singapore, the World and I' },
-  { code: 'G124', name: 'Effective Workplace Communication' },
-  { code: 'G125', name: 'Critical Thinking and Problem Solving Skills' },
-  { code: 'G131', name: 'Designing Your Life (Personal Growth I)' },
-  { code: 'G132', name: 'Designing Your Life (Future-Ready I)' },
-  { code: 'G133', name: 'Designing Your Life (Personal Growth II)' },
-  { code: 'G134', name: 'Designing Your Life (Future-Ready II)' },
-  { code: 'G135', name: 'Designing Your Impact' },
-  // Discipline
-  { code: 'C110', name: 'Programming Fundamentals I' },
-  { code: 'C112', name: 'Introduction to Business Process and Automation' },
-  { code: 'C206', name: 'Software Development Process' },
-  { code: 'C207', name: 'Database Systems' },
-  { code: 'C210', name: 'Programming Fundamentals II' },
-  { code: 'C227', name: 'Operating Systems and Networking' },
-  { code: 'C235', name: 'IT Security and Management' },
-  { code: 'C237', name: 'Software Application Development' },
-  { code: 'C240', name: 'AI Essentials and Innovations' },
-  { code: 'E123', name: 'Mathematics for Computing' },
-  // Major - Full Stack
   { code: 'C218', name: 'UI/UX Design for Apps' },
-  { code: 'C245', name: 'Data Intelligence and Visualisation' },
+  { code: 'C240', name: 'AI Essentials and Innovations' },
+  { code: 'C245', name: 'Data Analytics with GenAI' },
   { code: 'C257', name: 'Fundamentals of Design' },
   { code: 'C270', name: 'DevOps Essentials' },
   { code: 'C304', name: 'Cloud Application Development' },
