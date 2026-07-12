@@ -6,159 +6,29 @@
   <title>My Tasks - StudyHub</title>
   <link rel="stylesheet" href="/css/style.css">
   <style>
-    .tasks-page {
-      max-width: 1200px;
-      margin: 2rem auto;
-      padding: 0 2rem;
-    }
-
-    .tasks-page h1 {
-      font-size: 1.8rem;
-      font-weight: 700;
-      margin-bottom: 0.3rem;
-    }
-
-    .tasks-page .subtitle {
-      color: #6b7280;
-      font-size: 0.9rem;
-      margin-bottom: 2rem;
-    }
-
-    .tasks-grid {
-      display: grid;
-      grid-template-columns: 340px 1fr;
-      gap: 2rem;
-      align-items: start;
-    }
-
-    .add-task-box {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-      padding: 1.5rem;
-      position: sticky;
-      top: 1.5rem;
-    }
-
-    .box-title {
-      font-size: 1rem;
-      font-weight: 700;
-      margin: 0 0 1.2rem;
-      padding-left: 0.75rem;
-      border-left: 4px solid #6366f1;
-    }
-
+    .tasks-page { max-width: 1200px; margin: 2rem auto; padding: 0 2rem; }
+    .tasks-page h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.3rem; }
+    .tasks-page .subtitle { color: #6b7280; font-size: 0.9rem; margin-bottom: 2rem; }
+    .tasks-grid { display: grid; grid-template-columns: 340px 1fr; gap: 2rem; align-items: start; }
+    .add-task-box { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 1.5rem; position: sticky; top: 1.5rem; }
+    .box-title { font-size: 1rem; font-weight: 700; margin: 0 0 1.2rem; padding-left: 0.75rem; border-left: 4px solid #6366f1; }
     .box-title.official { border-left-color: #ef4444; }
-
     .f-group { margin-bottom: 0.9rem; }
-
-    .f-group label {
-      display: block;
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: #374151;
-      margin-bottom: 0.3rem;
-    }
-
-    .f-group input,
-    .f-group select,
-    .f-group textarea {
-      width: 100%;
-      padding: 0.5rem 0.75rem;
-      border: 1.5px solid #e5e7eb;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      background: #f9fafb;
-      box-sizing: border-box;
-      transition: border-color 0.15s;
-      font-family: inherit;
-    }
-
-    .f-group input:focus,
-    .f-group select:focus,
-    .f-group textarea:focus {
-      outline: none;
-      border-color: #6366f1;
-      background: #fff;
-    }
-
+    .f-group label { display: block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #374151; margin-bottom: 0.3rem; }
+    .f-group input, .f-group select, .f-group textarea { width: 100%; padding: 0.5rem 0.75rem; border: 1.5px solid #e5e7eb; border-radius: 8px; font-size: 0.9rem; background: #f9fafb; box-sizing: border-box; transition: border-color 0.15s; font-family: inherit; }
+    .f-group input:focus, .f-group select:focus, .f-group textarea:focus { outline: none; border-color: #6366f1; background: #fff; }
     .f-group small { font-size: 0.72rem; color: #9ca3af; margin-top: 0.2rem; display: block; }
-
-    .btn-submit {
-      width: 100%;
-      padding: 0.65rem;
-      background: #6366f1;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 0.5rem;
-    }
-
+    .btn-submit { width: 100%; padding: 0.65rem; background: #6366f1; color: #fff; border: none; border-radius: 8px; font-size: 0.9rem; font-weight: 600; cursor: pointer; margin-top: 0.5rem; }
     .btn-submit:hover { background: #4f46e5; }
     .btn-submit.red { background: #ef4444; }
     .btn-submit.red:hover { background: #dc2626; }
-
-    .task-list-box {
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-    }
-
+    .task-list-box { background: #fff; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 1.5rem; margin-bottom: 1.5rem; }
     .task-list-box:last-child { margin-bottom: 0; }
-
-    .official-box {
-      background: #fff8f8;
-      border: 1.5px solid #fecaca;
-      border-radius: 12px;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .filter-bar {
-      display: flex;
-      gap: 0.75rem;
-      margin-bottom: 1.2rem;
-      flex-wrap: wrap;
-    }
-
-    .filter-bar select {
-      padding: 0.45rem 0.75rem;
-      border: 1.5px solid #e5e7eb;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      background: #f9fafb;
-      cursor: pointer;
-    }
-
-    .btn-clear {
-      padding: 0.45rem 0.9rem;
-      background: #f3f4f6;
-      border: 1.5px solid #e5e7eb;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      text-decoration: none;
-      color: #374151;
-    }
-
-    .task-card {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 1rem 1.2rem;
-      margin-bottom: 0.75rem;
-      background: #f9fafb;
-      border-radius: 10px;
-      border-left: 4px solid #e5e7eb;
-      transition: box-shadow 0.15s;
-    }
-
+    .official-box { background: #fff8f8; border: 1.5px solid #fecaca; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .filter-bar { display: flex; gap: 0.75rem; margin-bottom: 1.2rem; flex-wrap: wrap; }
+    .filter-bar select { padding: 0.45rem 0.75rem; border: 1.5px solid #e5e7eb; border-radius: 8px; font-size: 0.85rem; background: #f9fafb; cursor: pointer; }
+    .btn-clear { padding: 0.45rem 0.9rem; background: #f3f4f6; border: 1.5px solid #e5e7eb; border-radius: 8px; font-size: 0.85rem; text-decoration: none; color: #374151; }
+    .task-card { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.2rem; margin-bottom: 0.75rem; background: #f9fafb; border-radius: 10px; border-left: 4px solid #e5e7eb; transition: box-shadow 0.15s; }
     .task-card:last-child { margin-bottom: 0; }
     .task-card:hover { box-shadow: 0 4px 14px rgba(0,0,0,0.09); }
     .task-card.overdue { border-left-color: #ef4444; background: #fff5f5; }
@@ -166,46 +36,14 @@
     .task-card.done { border-left-color: #10b981; opacity: 0.65; }
     .task-card.cert { border-left-color: #8b5cf6; }
     .task-card.cert.done { border-left-color: #10b981; }
-
-    .official-card {
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      padding: 1rem 1.2rem;
-      margin-bottom: 0.75rem;
-      background: #fff;
-      border-radius: 10px;
-      border: 1.5px solid #fecaca;
-      border-left: 4px solid #ef4444;
-      transition: box-shadow 0.15s;
-    }
-
+    .official-card { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.2rem; margin-bottom: 0.75rem; background: #fff; border-radius: 10px; border: 1.5px solid #fecaca; border-left: 4px solid #ef4444; transition: box-shadow 0.15s; }
     .official-card:last-child { margin-bottom: 0; }
     .official-card:hover { box-shadow: 0 4px 14px rgba(239,68,68,0.1); }
     .official-card.due-soon { background: #fff8f0; border-color: #fdba74; border-left-color: #f59e0b; }
-
     .task-info { flex: 1; min-width: 0; }
-
-    .task-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-      color: #111827;
-      margin: 0 0 0.4rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
+    .task-title { font-size: 0.95rem; font-weight: 600; color: #111827; margin: 0 0 0.4rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .task-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; }
-
-    .tag {
-      font-size: 0.7rem;
-      font-weight: 700;
-      padding: 0.18rem 0.55rem;
-      border-radius: 20px;
-      letter-spacing: 0.03em;
-    }
-
+    .tag { font-size: 0.7rem; font-weight: 700; padding: 0.18rem 0.55rem; border-radius: 20px; letter-spacing: 0.03em; }
     .tag-mod { background: #ede9fe; color: #5b21b6; }
     .tag-type { background: #e0f2fe; color: #0369a1; }
     .tag-ns { background: #f3f4f6; color: #6b7280; }
@@ -215,59 +53,15 @@
     .tag-soon { background: #fef3c7; color: #92400e; }
     .tag-official { background: #fee2e2; color: #991b1b; font-weight: 800; letter-spacing: 0.05em; }
     .tag-personal { background: #e0f2fe; color: #0369a1; font-weight: 800; letter-spacing: 0.05em; }
-
     .task-date { font-size: 0.78rem; color: #6b7280; white-space: nowrap; }
-
     .task-actions { display: flex; gap: 0.4rem; flex-shrink: 0; }
-
-    .btn-edit {
-      padding: 0.35rem 0.7rem;
-      background: #f3f4f6;
-      border: 1px solid #e5e7eb;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      text-decoration: none;
-      color: #374151;
-    }
-
+    .btn-edit { padding: 0.35rem 0.7rem; background: #f3f4f6; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 0.8rem; font-weight: 500; text-decoration: none; color: #374151; }
     .btn-edit:hover { background: #e5e7eb; }
-
-    .btn-del {
-      padding: 0.35rem 0.7rem;
-      background: #fff;
-      border: 1px solid #fca5a5;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      color: #ef4444;
-      cursor: pointer;
-    }
-
+    .btn-del { padding: 0.35rem 0.7rem; background: #fff; border: 1px solid #fca5a5; border-radius: 6px; font-size: 0.8rem; font-weight: 500; color: #ef4444; cursor: pointer; }
     .btn-del:hover { background: #fee2e2; }
-
-    .empty {
-      text-align: center;
-      padding: 2rem;
-      color: #9ca3af;
-      font-size: 0.9rem;
-    }
-
-    .alert-error {
-      background: #fee2e2;
-      border-left: 4px solid #ef4444;
-      color: #991b1b;
-      padding: 0.75rem 1rem;
-      border-radius: 6px;
-      margin-bottom: 1.5rem;
-      font-size: 0.9rem;
-    }
-
-    .posted-by {
-      font-size: 0.72rem;
-      color: #9ca3af;
-      margin-top: 0.2rem;
-    }
+    .empty { text-align: center; padding: 2rem; color: #9ca3af; font-size: 0.9rem; }
+    .alert-error { background: #fee2e2; border-left: 4px solid #ef4444; color: #991b1b; padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1.5rem; font-size: 0.9rem; }
+    .posted-by { font-size: 0.72rem; color: #9ca3af; margin-top: 0.2rem; }
   </style>
 </head>
 <body>
