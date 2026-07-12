@@ -8,10 +8,10 @@
 </head>
 <body>
   <%- include('partials/nav') %>
-  <main>
+  <main class="wide">
     <div class="card">
       <h1>Admin Dashboard</h1>
-      <p class="mb-2" style="color:#666;">Welcome, <%= user.full_name %>. Manage faculty accounts below.</p>
+      <p class="mb-2" style="color:#666;">Welcome, <%= user.full_name %>. Manage faculty and user accounts below.</p>
 
       <% if (locals.success) { %>
         <div class="alert alert-success"><%= success %></div>
@@ -45,12 +45,48 @@
           <label>Assign Module Class Codes</label>
           <div class="module-select-group">
             <div class="module-select-item">
-              <label for="class_codes_C237">C237 — Software Application Development</label>
-              <select id="class_codes_C237" name="class_codes_C237">
+              <label for="class_codes_C218">C218 — UI/UX Design for Apps</label>
+              <select id="class_codes_C218" name="class_codes_C218">
                 <option value="">-- Not assigned --</option>
-                <option value="C237-010">C237-010</option>
-                <option value="C237-020">C237-020</option>
-                <option value="C237-030">C237-030</option>
+                <option value="C218-010">C218-010</option>
+                <option value="C218-020">C218-020</option>
+                <option value="C218-030">C218-030</option>
+              </select>
+            </div>
+            <div class="module-select-item">
+              <label for="class_codes_C240">C240 — AI Essentials and Innovations</label>
+              <select id="class_codes_C240" name="class_codes_C240">
+                <option value="">-- Not assigned --</option>
+                <option value="C240-010">C240-010</option>
+                <option value="C240-020">C240-020</option>
+                <option value="C240-030">C240-030</option>
+              </select>
+            </div>
+            <div class="module-select-item">
+              <label for="class_codes_C245">C245 — Data Intelligence and Visualisation</label>
+              <select id="class_codes_C245" name="class_codes_C245">
+                <option value="">-- Not assigned --</option>
+                <option value="C245-010">C245-010</option>
+                <option value="C245-020">C245-020</option>
+                <option value="C245-030">C245-030</option>
+              </select>
+            </div>
+            <div class="module-select-item">
+              <label for="class_codes_C246">C246 — Data Analytics with GenAI</label>
+              <select id="class_codes_C246" name="class_codes_C246">
+                <option value="">-- Not assigned --</option>
+                <option value="C246-010">C246-010</option>
+                <option value="C246-020">C246-020</option>
+                <option value="C246-030">C246-030</option>
+              </select>
+            </div>
+            <div class="module-select-item">
+              <label for="class_codes_C257">C257 — Fundamentals of Design</label>
+              <select id="class_codes_C257" name="class_codes_C257">
+                <option value="">-- Not assigned --</option>
+                <option value="C257-010">C257-010</option>
+                <option value="C257-020">C257-020</option>
+                <option value="C257-030">C257-030</option>
               </select>
             </div>
             <div class="module-select-item">
@@ -59,6 +95,7 @@
                 <option value="">-- Not assigned --</option>
                 <option value="C270-010">C270-010</option>
                 <option value="C270-020">C270-020</option>
+                <option value="C270-030">C270-030</option>
               </select>
             </div>
             <div class="module-select-item">
@@ -67,14 +104,34 @@
                 <option value="">-- Not assigned --</option>
                 <option value="C304-010">C304-010</option>
                 <option value="C304-020">C304-020</option>
+                <option value="C304-030">C304-030</option>
               </select>
             </div>
             <div class="module-select-item">
-              <label for="class_codes_C218">C218 — UI/UX Design for Web & Mobile</label>
-              <select id="class_codes_C218" name="class_codes_C218">
+              <label for="class_codes_C339">C339 — Software Testing and Analytics</label>
+              <select id="class_codes_C339" name="class_codes_C339">
                 <option value="">-- Not assigned --</option>
-                <option value="C218-010">C218-010</option>
-                <option value="C218-020">C218-020</option>
+                <option value="C339-010">C339-010</option>
+                <option value="C339-020">C339-020</option>
+                <option value="C339-030">C339-030</option>
+              </select>
+            </div>
+            <div class="module-select-item">
+              <label for="class_codes_C346">C346 — Mobile App Development</label>
+              <select id="class_codes_C346" name="class_codes_C346">
+                <option value="">-- Not assigned --</option>
+                <option value="C346-010">C346-010</option>
+                <option value="C346-020">C346-020</option>
+                <option value="C346-030">C346-030</option>
+              </select>
+            </div>
+            <div class="module-select-item">
+              <label for="class_codes_C390">C390 — Portfolio Development</label>
+              <select id="class_codes_C390" name="class_codes_C390">
+                <option value="">-- Not assigned --</option>
+                <option value="C390-010">C390-010</option>
+                <option value="C390-020">C390-020</option>
+                <option value="C390-030">C390-030</option>
               </select>
             </div>
           </div>
@@ -84,8 +141,207 @@
         <button type="submit" class="btn">Create Teacher Account</button>
       </form>
 
+      <hr class="mb-2 mt-2">
+
+      <h2 class="mb-1">User Management</h2>
+      <p style="color:#666; font-size:0.9rem; margin-bottom:1rem;">View, edit, and manage all registered student and teacher accounts.</p>
+
+      <div class="admin-tabs">
+        <button class="admin-tab active" onclick="switchTab('students')">Student Accounts (<%= students.length %>)</button>
+        <button class="admin-tab" onclick="switchTab('teachers')">Teacher Accounts (<%= teachers.length %>)</button>
+      </div>
+
+      <div id="tab-students" class="admin-tab-content active">
+        <% if (students.length === 0) { %>
+          <p style="color:#999; padding:1rem 0;">No student accounts found.</p>
+        <% } else { %>
+          <div class="table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Full Name</th>
+                  <th>Class Codes</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% students.forEach(function(s) { %>
+                  <tr>
+                    <td><%= s.username %></td>
+                    <td><%= s.full_name %></td>
+                    <td class="codes-cell">
+                      <%
+                        var sCodes = (s.class_codes || '').split(',').map(function(c) { return c.trim(); }).filter(function(c) { return c && c !== '-- Not taking --'; });
+                      %>
+                      <% if (sCodes.length === 0) { %>
+                        <span class="codes-empty">None</span>
+                      <% } else { %>
+                        <% sCodes.forEach(function(code) { %>
+                          <span class="code-badge"><%= code %></span>
+                        <% }); %>
+                      <% } %>
+                    </td>
+                    <td class="actions-cell">
+                      <button class="btn btn-sm btn-edit" onclick='openEditModal(<%= JSON.stringify({user_id: s.user_id, full_name: s.full_name, bio: s.bio || "", class_codes: s.class_codes || "", role_type: s.role_type}) %>)'>Edit</button>
+                      <form action="/admin/delete-user/<%= s.user_id %>" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete student \'<%= s.username %>\'? This action cannot be undone.');">
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                      </form>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </div>
+
+      <div id="tab-teachers" class="admin-tab-content">
+        <% if (teachers.length === 0) { %>
+          <p style="color:#999; padding:1rem 0;">No teacher accounts found.</p>
+        <% } else { %>
+          <div class="table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Full Name</th>
+                  <th>Assigned Modules</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% teachers.forEach(function(t) { %>
+                  <tr>
+                    <td><%= t.username %></td>
+                    <td><%= t.full_name %></td>
+                    <td class="codes-cell">
+                      <%
+                        var tCodes = (t.class_codes || '').split(',').map(function(c) { return c.trim(); }).filter(function(c) { return c && c !== '-- Not taking --'; });
+                      %>
+                      <% if (tCodes.length === 0) { %>
+                        <span class="codes-empty">None</span>
+                      <% } else { %>
+                        <% tCodes.forEach(function(code) { %>
+                          <span class="code-badge"><%= code %></span>
+                        <% }); %>
+                      <% } %>
+                    </td>
+                    <td class="actions-cell">
+                      <button class="btn btn-sm btn-edit" onclick='openEditModal(<%= JSON.stringify({user_id: t.user_id, full_name: t.full_name, bio: t.bio || "", class_codes: t.class_codes || "", role_type: t.role_type}) %>)'>Edit</button>
+                      <form action="/admin/delete-user/<%= t.user_id %>" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete teacher \'<%= t.username %>\'? This action cannot be undone.');">
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                      </form>
+                    </td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </div>
+
       <p class="mt-2 text-center"><a href="/profile">&larr; Back to Main Dashboard</a></p>
     </div>
   </main>
+
+  <div id="editModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content card">
+      <div class="modal-header">
+        <h2>Edit User</h2>
+        <button class="modal-close" onclick="closeEditModal()">&times;</button>
+      </div>
+      <form id="editUserForm" method="POST">
+        <div class="form-group">
+          <label for="edit_full_name">Full Name</label>
+          <input type="text" id="edit_full_name" name="full_name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="edit_bio">Bio</label>
+          <textarea id="edit_bio" name="bio" rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Module Class Codes</label>
+          <div class="module-select-group">
+            <%
+              var editModules = [
+                { code: 'C218', name: 'UI/UX Design for Apps' },
+                { code: 'C240', name: 'AI Essentials and Innovations' },
+                { code: 'C245', name: 'Data Intelligence and Visualisation' },
+                { code: 'C246', name: 'Data Analytics with GenAI' },
+                { code: 'C257', name: 'Fundamentals of Design' },
+                { code: 'C270', name: 'DevOps Essentials' },
+                { code: 'C304', name: 'Cloud Application Development' },
+                { code: 'C339', name: 'Software Testing and Analytics' },
+                { code: 'C346', name: 'Mobile App Development' },
+                { code: 'C390', name: 'Portfolio Development' }
+              ];
+            %>
+            <% editModules.forEach(function(mod) { %>
+              <div class="module-select-item">
+                <label for="edit_class_codes_<%= mod.code %>"><%= mod.code %> — <%= mod.name %></label>
+                <select id="edit_class_codes_<%= mod.code %>" name="class_codes_<%= mod.code %>">
+                  <option value="">-- Not assigned --</option>
+                  <option value="<%= mod.code %>-010"><%= mod.code %>-010</option>
+                  <option value="<%= mod.code %>-020"><%= mod.code %>-020</option>
+                  <option value="<%= mod.code %>-030"><%= mod.code %>-030</option>
+                </select>
+              </div>
+            <% }); %>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="submit" class="btn">Save Changes</button>
+          <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function switchTab(tab) {
+      document.querySelectorAll('.admin-tab').forEach(function(b) { b.classList.remove('active'); });
+      document.querySelectorAll('.admin-tab-content').forEach(function(c) { c.classList.remove('active'); });
+
+      if (tab === 'students') {
+        document.querySelector('.admin-tab:nth-child(1)').classList.add('active');
+        document.getElementById('tab-students').classList.add('active');
+      } else {
+        document.querySelector('.admin-tab:nth-child(2)').classList.add('active');
+        document.getElementById('tab-teachers').classList.add('active');
+      }
+    }
+
+    var allModules = ['C218','C240','C245','C246','C257','C270','C304','C339','C346','C390'];
+
+    function openEditModal(userData) {
+      document.getElementById('editUserForm').action = '/admin/edit-user/' + userData.user_id;
+      document.getElementById('edit_full_name').value = userData.full_name;
+      document.getElementById('edit_bio').value = userData.bio;
+
+      var savedCodes = (userData.class_codes || '').split(',').map(function(c) { return c.trim(); });
+
+      allModules.forEach(function(mod) {
+        var sel = document.getElementById('edit_class_codes_' + mod);
+        if (sel) {
+          var matched = savedCodes.filter(function(c) { return c.indexOf(mod) === 0; });
+          sel.value = matched.length > 0 ? matched[0] : '';
+        }
+      });
+
+      document.getElementById('editModal').style.display = 'flex';
+    }
+
+    function closeEditModal() {
+      document.getElementById('editModal').style.display = 'none';
+    }
+
+    document.getElementById('editModal').addEventListener('click', function(e) {
+      if (e.target === this) closeEditModal();
+    });
+  </script>
 </body>
 </html>

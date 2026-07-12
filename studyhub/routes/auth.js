@@ -4,7 +4,11 @@ const bcrypt = require('bcryptjs');
 const pool = require('../config/db');
 const { requireAuth } = require('../middleware/auth');
 
-const MODULE_FIELDS = ['class_codes_C237', 'class_codes_C270', 'class_codes_C304', 'class_codes_C218'];
+const MODULE_FIELDS = [
+  'class_codes_C218', 'class_codes_C240', 'class_codes_C245', 'class_codes_C246',
+  'class_codes_C257', 'class_codes_C270', 'class_codes_C304', 'class_codes_C339',
+  'class_codes_C346', 'class_codes_C390'
+];
 
 function combineClassCodes(body) {
   return MODULE_FIELDS

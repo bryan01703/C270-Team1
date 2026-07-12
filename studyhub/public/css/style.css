@@ -88,6 +88,7 @@ h1 {
   padding: 2rem;
   box-shadow: 0 1px 8px rgba(0,0,0,0.06);
   border: 1px solid #e2e8f0;
+  overflow: hidden;
 }
 
 .form-group {
@@ -277,23 +278,50 @@ hr {
 }
 
 .module-select-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
   margin-top: 0.25rem;
 }
 
+@media (max-width: 860px) {
+  .module-select-group {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 520px) {
+  .module-select-group {
+    grid-template-columns: 1fr;
+  }
+}
+
 .module-select-item {
-  background: #f9f9f9;
-  border: 1px solid #eee;
-  border-radius: 6px;
-  padding: 0.75rem;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 0.5rem 0.6rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .module-select-item label {
+  font-size: 0.8rem;
   font-weight: 600;
-  color: #2c3e50;
-  margin-bottom: 0.35rem;
+  color: #374151;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.module-select-item select {
+  font-size: 0.85rem;
+  padding: 0.3rem 0.4rem;
+  border-radius: 4px;
+  width: 100%;
+  min-width: 0;
 }
 
 .role-actions {
@@ -444,4 +472,230 @@ main.wide {
 
 .btn-secondary:hover {
     background: #5a6268;
+}
+
+/* ---- Admin Tabs ---- */
+
+.admin-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid #e2e8f0;
+  margin-bottom: 1rem;
+}
+
+.admin-tab {
+  padding: 0.6rem 1.25rem;
+  border: none;
+  background: transparent;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #666;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.15s;
+}
+
+.admin-tab:hover {
+  color: #3498db;
+}
+
+.admin-tab.active {
+  color: #3498db;
+  border-bottom-color: #3498db;
+}
+
+.admin-tab-content {
+  display: none;
+}
+
+.admin-tab-content.active {
+  display: block;
+}
+
+/* ---- Admin Table ---- */
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.admin-table th {
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  background: #f1f5f9;
+  color: #475569;
+  font-weight: 600;
+  border-bottom: 2px solid #e2e8f0;
+  white-space: nowrap;
+}
+
+.admin-table td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid #eee;
+  vertical-align: middle;
+}
+
+.admin-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.codes-cell {
+  max-width: 280px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem;
+  min-height: 1.5rem;
+}
+
+.codes-empty {
+  font-size: 0.82rem;
+  color: #999;
+  font-style: italic;
+}
+
+.code-badge {
+  display: inline-block;
+  padding: 0.15rem 0.55rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #334155;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 9999px;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+.actions-cell {
+  white-space: nowrap;
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.btn-sm {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+  border-radius: 4px;
+}
+
+.btn-edit {
+  background: #f59e0b;
+  color: #fff;
+}
+
+.btn-edit:hover {
+  background: #d97706;
+}
+
+/* ---- Edit User Modal ---- */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-content {
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.modal-header h2 {
+  margin-bottom: 0;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
+  padding: 0.25rem;
+  line-height: 1;
+}
+
+.modal-close:hover {
+  color: #333;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+/* ---- Profile Module Grid ---- */
+
+.class-codes-display {
+  margin-top: 0.5rem;
+}
+
+.class-codes-display > strong {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.5rem;
+}
+
+.module-grid-item {
+  background: #f9f9f9;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 0.5rem 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.module-grid-item.enrolled {
+  background: #e8f5e9;
+  border-color: #c3e6cb;
+}
+
+.module-grid-code {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: #2c3e50;
+}
+
+.module-grid-name {
+  font-size: 0.78rem;
+  color: #666;
+}
+
+.module-grid-class {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #155724;
+}
+
+.module-grid-item:not(.enrolled) .module-grid-class {
+  color: #999;
+  font-style: italic;
 }

@@ -27,8 +27,38 @@
         <% if (user.bio) { %>
           <p><strong>Bio:</strong> <span><%= user.bio %></span></p>
         <% } %>
-        <% if (user.class_codes) { %>
-          <p><strong>Class Codes:</strong> <span><%= user.class_codes %></span></p>
+        <% if (user.role_type === 'Student' || user.role_type === 'Teacher') { %>
+          <div class="class-codes-display">
+            <strong>Enrolled Classes:</strong>
+            <div class="module-grid">
+              <%
+                var allModules = [
+                  { code: 'C218', name: 'UI/UX Design for Apps' },
+                  { code: 'C240', name: 'AI Essentials and Innovations' },
+                  { code: 'C245', name: 'Data Intelligence and Visualisation' },
+                  { code: 'C246', name: 'Data Analytics with GenAI' },
+                  { code: 'C257', name: 'Fundamentals of Design' },
+                  { code: 'C270', name: 'DevOps Essentials' },
+                  { code: 'C304', name: 'Cloud Application Development' },
+                  { code: 'C339', name: 'Software Testing and Analytics' },
+                  { code: 'C346', name: 'Mobile App Development' },
+                  { code: 'C390', name: 'Portfolio Development' }
+                ];
+                var savedCodes = (user.class_codes || '').split(',').map(function(c) { return c.trim(); });
+              %>
+              <% allModules.forEach(function(mod) { %>
+                <%
+                  var matched = savedCodes.filter(function(c) { return c.indexOf(mod.code) === 0; });
+                  var display = matched.length > 0 ? matched.join(', ') : 'Not Enrolled';
+                %>
+                <div class="module-grid-item<%= matched.length > 0 ? ' enrolled' : '' %>">
+                  <span class="module-grid-code"><%= mod.code %></span>
+                  <span class="module-grid-name"><%= mod.name %></span>
+                  <span class="module-grid-class"><%= display %></span>
+                </div>
+              <% }); %>
+            </div>
+          </div>
         <% } %>
       </div>
 
@@ -58,12 +88,48 @@
             <label>Select your class code for each module this semester:</label>
             <div class="module-select-group">
               <div class="module-select-item">
-                <label for="class_codes_C237">C237 — Software Application Development</label>
-                <select id="class_codes_C237" name="class_codes_C237">
+                <label for="class_codes_C218">C218 — UI/UX Design for Apps</label>
+                <select id="class_codes_C218" name="class_codes_C218">
                   <option value="">-- Not taking --</option>
-                  <option value="C237-010" <%= codes.indexOf('C237-010') !== -1 ? 'selected' : '' %>>C237-010</option>
-                  <option value="C237-020" <%= codes.indexOf('C237-020') !== -1 ? 'selected' : '' %>>C237-020</option>
-                  <option value="C237-030" <%= codes.indexOf('C237-030') !== -1 ? 'selected' : '' %>>C237-030</option>
+                  <option value="C218-010" <%= codes.indexOf('C218-010') !== -1 ? 'selected' : '' %>>C218-010</option>
+                  <option value="C218-020" <%= codes.indexOf('C218-020') !== -1 ? 'selected' : '' %>>C218-020</option>
+                  <option value="C218-030" <%= codes.indexOf('C218-030') !== -1 ? 'selected' : '' %>>C218-030</option>
+                </select>
+              </div>
+              <div class="module-select-item">
+                <label for="class_codes_C240">C240 — AI Essentials and Innovations</label>
+                <select id="class_codes_C240" name="class_codes_C240">
+                  <option value="">-- Not taking --</option>
+                  <option value="C240-010" <%= codes.indexOf('C240-010') !== -1 ? 'selected' : '' %>>C240-010</option>
+                  <option value="C240-020" <%= codes.indexOf('C240-020') !== -1 ? 'selected' : '' %>>C240-020</option>
+                  <option value="C240-030" <%= codes.indexOf('C240-030') !== -1 ? 'selected' : '' %>>C240-030</option>
+                </select>
+              </div>
+              <div class="module-select-item">
+                <label for="class_codes_C245">C245 — Data Intelligence and Visualisation</label>
+                <select id="class_codes_C245" name="class_codes_C245">
+                  <option value="">-- Not taking --</option>
+                  <option value="C245-010" <%= codes.indexOf('C245-010') !== -1 ? 'selected' : '' %>>C245-010</option>
+                  <option value="C245-020" <%= codes.indexOf('C245-020') !== -1 ? 'selected' : '' %>>C245-020</option>
+                  <option value="C245-030" <%= codes.indexOf('C245-030') !== -1 ? 'selected' : '' %>>C245-030</option>
+                </select>
+              </div>
+              <div class="module-select-item">
+                <label for="class_codes_C246">C246 — Data Analytics with GenAI</label>
+                <select id="class_codes_C246" name="class_codes_C246">
+                  <option value="">-- Not taking --</option>
+                  <option value="C246-010" <%= codes.indexOf('C246-010') !== -1 ? 'selected' : '' %>>C246-010</option>
+                  <option value="C246-020" <%= codes.indexOf('C246-020') !== -1 ? 'selected' : '' %>>C246-020</option>
+                  <option value="C246-030" <%= codes.indexOf('C246-030') !== -1 ? 'selected' : '' %>>C246-030</option>
+                </select>
+              </div>
+              <div class="module-select-item">
+                <label for="class_codes_C257">C257 — Fundamentals of Design</label>
+                <select id="class_codes_C257" name="class_codes_C257">
+                  <option value="">-- Not taking --</option>
+                  <option value="C257-010" <%= codes.indexOf('C257-010') !== -1 ? 'selected' : '' %>>C257-010</option>
+                  <option value="C257-020" <%= codes.indexOf('C257-020') !== -1 ? 'selected' : '' %>>C257-020</option>
+                  <option value="C257-030" <%= codes.indexOf('C257-030') !== -1 ? 'selected' : '' %>>C257-030</option>
                 </select>
               </div>
               <div class="module-select-item">
@@ -72,6 +138,7 @@
                   <option value="">-- Not taking --</option>
                   <option value="C270-010" <%= codes.indexOf('C270-010') !== -1 ? 'selected' : '' %>>C270-010</option>
                   <option value="C270-020" <%= codes.indexOf('C270-020') !== -1 ? 'selected' : '' %>>C270-020</option>
+                  <option value="C270-030" <%= codes.indexOf('C270-030') !== -1 ? 'selected' : '' %>>C270-030</option>
                 </select>
               </div>
               <div class="module-select-item">
@@ -80,18 +147,38 @@
                   <option value="">-- Not taking --</option>
                   <option value="C304-010" <%= codes.indexOf('C304-010') !== -1 ? 'selected' : '' %>>C304-010</option>
                   <option value="C304-020" <%= codes.indexOf('C304-020') !== -1 ? 'selected' : '' %>>C304-020</option>
+                  <option value="C304-030" <%= codes.indexOf('C304-030') !== -1 ? 'selected' : '' %>>C304-030</option>
                 </select>
               </div>
               <div class="module-select-item">
-                <label for="class_codes_C218">C218 — UI/UX Design for Web & Mobile</label>
-                <select id="class_codes_C218" name="class_codes_C218">
+                <label for="class_codes_C339">C339 — Software Testing and Analytics</label>
+                <select id="class_codes_C339" name="class_codes_C339">
                   <option value="">-- Not taking --</option>
-                  <option value="C218-010" <%= codes.indexOf('C218-010') !== -1 ? 'selected' : '' %>>C218-010</option>
-                  <option value="C218-020" <%= codes.indexOf('C218-020') !== -1 ? 'selected' : '' %>>C218-020</option>
+                  <option value="C339-010" <%= codes.indexOf('C339-010') !== -1 ? 'selected' : '' %>>C339-010</option>
+                  <option value="C339-020" <%= codes.indexOf('C339-020') !== -1 ? 'selected' : '' %>>C339-020</option>
+                  <option value="C339-030" <%= codes.indexOf('C339-030') !== -1 ? 'selected' : '' %>>C339-030</option>
+                </select>
+              </div>
+              <div class="module-select-item">
+                <label for="class_codes_C346">C346 — Mobile App Development</label>
+                <select id="class_codes_C346" name="class_codes_C346">
+                  <option value="">-- Not taking --</option>
+                  <option value="C346-010" <%= codes.indexOf('C346-010') !== -1 ? 'selected' : '' %>>C346-010</option>
+                  <option value="C346-020" <%= codes.indexOf('C346-020') !== -1 ? 'selected' : '' %>>C346-020</option>
+                  <option value="C346-030" <%= codes.indexOf('C346-030') !== -1 ? 'selected' : '' %>>C346-030</option>
+                </select>
+              </div>
+              <div class="module-select-item">
+                <label for="class_codes_C390">C390 — Portfolio Development</label>
+                <select id="class_codes_C390" name="class_codes_C390">
+                  <option value="">-- Not taking --</option>
+                  <option value="C390-010" <%= codes.indexOf('C390-010') !== -1 ? 'selected' : '' %>>C390-010</option>
+                  <option value="C390-020" <%= codes.indexOf('C390-020') !== -1 ? 'selected' : '' %>>C390-020</option>
+                  <option value="C390-030" <%= codes.indexOf('C390-030') !== -1 ? 'selected' : '' %>>C390-030</option>
                 </select>
               </div>
             </div>
-            <small class="helper-text">&#128161; Where do I find this? Check your <a href="#" onclick="alert('Open SNApp → Timetable or Attendance screen. Your module class code (e.g., C237-030) appears next to each scheduled module.'); return false;">SNApp timetable or attendance screen</a>! Your code (e.g., C237-030) is listed right next to your scheduled modules.</small>
+            <small class="helper-text">&#128161; Where do I find this? Check your <a href="#" onclick="alert('Open SNApp &#8594; Timetable or Attendance screen. Your module class code (e.g., C218-030) appears next to each scheduled module.'); return false;">SNApp timetable or attendance screen</a>! Your code (e.g., C218-030) is listed right next to your scheduled modules.</small>
           </div>
         <% } %>
 
