@@ -16,7 +16,7 @@ const VALID_MODULES = [
 ];
 
 const VALID_STATUSES = ['Not Started', 'In Progress', 'Done'];
-const VALID_TASK_TYPES = ['Assignment', 'Certification', 'To-Do', 'Quiz', 'Project'];
+const VALID_TASK_TYPES = ['Assignment', 'To-Do', 'Quiz', 'Project'];
 const VALID_DEADLINE_TYPES = ['Exam', 'Project', 'Assignment', 'Quiz', 'Other'];
 
 function isValidModule(mod) {
@@ -43,6 +43,11 @@ router.get('/tasks', requireAuth, async (req, res) => {
     query += ' ORDER BY due_date ASC';
     const [tasks] = await pool.execute(query, params);
 
+    const [certifications] = await pool.execute(
+      'SELECT * FROM certifications WHERE user_id = ? ORDER BY created_at DESC',
+      [req.session.userId]
+    );
+
     const [officialDeadlines] = await pool.execute(
       `SELECT od.*, u.full_name AS created_by_name
        FROM official_deadlines od
@@ -56,6 +61,7 @@ router.get('/tasks', requireAuth, async (req, res) => {
       title: 'My Tasks',
       tasks,
       officialDeadlines,
+      certifications,
       VALID_MODULES,
       VALID_STATUSES,
       VALID_TASK_TYPES,
@@ -71,6 +77,7 @@ router.get('/tasks', requireAuth, async (req, res) => {
       title: 'My Tasks',
       tasks: [],
       officialDeadlines: [],
+      certifications: [],
       VALID_MODULES,
       VALID_STATUSES,
       VALID_TASK_TYPES,
@@ -110,10 +117,15 @@ router.post('/tasks/add', requireAuth, async (req, res) => {
        WHERE od.due_date >= ? ORDER BY od.due_date ASC`,
       [new Date().toISOString().split('T')[0]]
     );
+    const [certifications] = await pool.execute(
+      'SELECT * FROM certifications WHERE user_id = ? ORDER BY created_at DESC',
+      [req.session.userId]
+    );
     return res.render('tasks/index', {
       title: 'My Tasks',
       tasks,
       officialDeadlines,
+      certifications,
       VALID_MODULES,
       VALID_STATUSES,
       VALID_TASK_TYPES,
@@ -269,6 +281,41 @@ router.post('/official-deadlines/delete/:id', requireAuth, async (req, res) => {
     res.redirect('/tasks');
   } catch (err) {
     console.error('Delete official deadline error:', err.message);
+    res.redirect('/tasks');
+  }
+});
+
+router.post('/certifications/add', requireAuth, async (req, res) => {
+  const { name, provider, status, target_date } = req.body;
+  const errors = [];
+
+  if (!name || !name.trim()) errors.push('Certification name is required.');
+  if (!provider || !provider.trim()) errors.push('Provider is required.');
+  if (!['In Progress', 'Completed'].includes(status)) errors.push('Invalid status.');
+
+  if (errors.length > 0) return res.redirect('/tasks');
+
+  try {
+    await pool.execute(
+      'INSERT INTO certifications (user_id, name, provider, status, target_date) VALUES (?, ?, ?, ?, ?)',
+      [req.session.userId, name.trim(), provider.trim(), status, target_date || null]
+    );
+    res.redirect('/tasks');
+  } catch (err) {
+    console.error('Add cert error:', err.message);
+    res.redirect('/tasks');
+  }
+});
+
+router.post('/certifications/delete/:id', requireAuth, async (req, res) => {
+  try {
+    await pool.execute(
+      'DELETE FROM certifications WHERE cert_id = ? AND user_id = ?',
+      [req.params.id, req.session.userId]
+    );
+    res.redirect('/tasks');
+  } catch (err) {
+    console.error('Delete cert error:', err.message);
     res.redirect('/tasks');
   }
 });
