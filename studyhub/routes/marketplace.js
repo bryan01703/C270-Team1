@@ -84,29 +84,15 @@ function safeUploadedFileName(value) {
   return path.basename(String(value));
 }
 
-function renderNav(req) {
-  if (req.session.userId) {
-    return `
-      <nav>
-        <a href="/" class="brand">Study<span>Hub</span></a>
-        <a href="/tasks">My Tasks</a>
-        <a href="/studygroups">Study Groups</a>
-        <a href="/marketplace">Marketplace</a>
-        <a href="/profile">Profile</a>
-        <a href="/auth/logout">Logout</a>
-      </nav>`;
-  }
-
-  return `
-    <nav>
-      <a href="/" class="brand">Study<span>Hub</span></a>
-      <a href="/login">Login</a>
-      <a href="/register">Sign Up</a>
-    </nav>`;
-}
 
 function renderPage(req, res, title, mainHtml, statusCode = 200) {
-  res.status(statusCode).send(`<!DOCTYPE html>
+  req.app.render('partials/nav', { locals: { userId: req.session.userId } }, (err, navHtml) => {
+    if (err) {
+      console.error('Nav render error:', err.message);
+      navHtml = '';
+    }
+
+    res.status(statusCode).send(`<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -115,10 +101,11 @@ function renderPage(req, res, title, mainHtml, statusCode = 200) {
   <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
-  ${renderNav(req)}
+  ${navHtml}
   ${mainHtml}
 </body>
 </html>`);
+  });
 }
 
 async function getNoteById(noteId) {

@@ -58,3 +58,27 @@ CREATE TABLE IF NOT EXISTS announcement_audit (
   title_snapshot VARCHAR(255),
   FOREIGN KEY (performed_by) REFERENCES users(user_id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS study_groups (
+  group_id INT AUTO_INCREMENT PRIMARY KEY,
+  group_name VARCHAR(100) NOT NULL,
+  module_code VARCHAR(20) NOT NULL,
+  session_date DATE NOT NULL,
+  session_time VARCHAR(20) NOT NULL,
+  location VARCHAR(150) NOT NULL,
+  session_link VARCHAR(255) DEFAULT '',
+  description TEXT,
+  max_slots INT NOT NULL DEFAULT 5,
+  created_by INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (created_by) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS study_group_members (
+  group_id INT NOT NULL,
+  user_id INT NOT NULL,
+  joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (group_id, user_id),
+  FOREIGN KEY (group_id) REFERENCES study_groups(group_id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
