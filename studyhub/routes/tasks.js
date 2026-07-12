@@ -4,17 +4,50 @@ const pool = require('../config/db');
 const { requireAuth } = require('../middleware/auth');
 
 const VALID_MODULES = [
-  'G121', 'G123', 'G124', 'G125', 'G131', 'G132', 'G133', 'G134', 'G135',
-  'C110', 'C112', 'C206', 'C207', 'C210', 'C227', 'C235', 'C237', 'C240', 'E123',
-  'C218', 'C245', 'C257', 'C270', 'C304', 'C339', 'C346', 'C390',
+  // General
+  { code: 'G121', name: 'Innovation and Practice' },
+  { code: 'G123', name: 'Singapore, the World and I' },
+  { code: 'G124', name: 'Effective Workplace Communication' },
+  { code: 'G125', name: 'Critical Thinking and Problem Solving Skills' },
+  { code: 'G131', name: 'Designing Your Life (Personal Growth I)' },
+  { code: 'G132', name: 'Designing Your Life (Future-Ready I)' },
+  { code: 'G133', name: 'Designing Your Life (Personal Growth II)' },
+  { code: 'G134', name: 'Designing Your Life (Future-Ready II)' },
+  { code: 'G135', name: 'Designing Your Impact' },
+  // Discipline
+  { code: 'C110', name: 'Programming Fundamentals I' },
+  { code: 'C112', name: 'Introduction to Business Process and Automation' },
+  { code: 'C206', name: 'Software Development Process' },
+  { code: 'C207', name: 'Database Systems' },
+  { code: 'C210', name: 'Programming Fundamentals II' },
+  { code: 'C227', name: 'Operating Systems and Networking' },
+  { code: 'C235', name: 'IT Security and Management' },
+  { code: 'C237', name: 'Software Application Development' },
+  { code: 'C240', name: 'AI Essentials and Innovations' },
+  { code: 'E123', name: 'Mathematics for Computing' },
+  // Major - Full Stack
+  { code: 'C218', name: 'UI/UX Design for Apps' },
+  { code: 'C245', name: 'Data Intelligence and Visualisation' },
+  { code: 'C257', name: 'Fundamentals of Design' },
+  { code: 'C270', name: 'DevOps Essentials' },
+  { code: 'C304', name: 'Cloud Application Development' },
+  { code: 'C339', name: 'Software Testing and Analytics' },
+  { code: 'C346', name: 'Mobile App Development' },
+  { code: 'C390', name: 'Portfolio Development' },
 ];
 
 const VALID_STATUSES = ['Not Started', 'In Progress', 'Done'];
 const VALID_TASK_TYPES = ['Assignment', 'Certification', 'To-Do', 'Quiz', 'Project'];
+const VALID_DEADLINE_TYPES = ['Exam', 'Project', 'Assignment', 'Quiz', 'Other'];
+
+function isValidModule(mod) {
+  return VALID_MODULES.some(m => m.code === mod);
+}
 
 router.get('/tasks', requireAuth, async (req, res) => {
   try {
     const { status, module: modFilter } = req.query;
+    const today = new Date(); today.setHours(0, 0, 0, 0);
 
     let query = 'SELECT * FROM tasks WHERE user_id = ?';
     const params = [req.session.userId];
@@ -23,36 +56,50 @@ router.get('/tasks', requireAuth, async (req, res) => {
       query += ' AND status = ?';
       params.push(status);
     }
-    if (modFilter && VALID_MODULES.includes(modFilter)) {
+    if (modFilter && isValidModule(modFilter)) {
       query += ' AND module = ?';
       params.push(modFilter);
     }
 
     query += ' ORDER BY due_date ASC';
-
     const [tasks] = await pool.execute(query, params);
+
+    const [officialDeadlines] = await pool.execute(
+      `SELECT od.*, u.full_name AS created_by_name
+       FROM official_deadlines od
+       JOIN users u ON od.created_by = u.user_id
+       WHERE od.due_date >= ?
+       ORDER BY od.due_date ASC`,
+      [today.toISOString().split('T')[0]]
+    );
 
     res.render('tasks/index', {
       title: 'My Tasks',
       tasks,
+      officialDeadlines,
       VALID_MODULES,
       VALID_STATUSES,
       VALID_TASK_TYPES,
+      VALID_DEADLINE_TYPES,
       userModules: VALID_MODULES,
       selectedStatus: status || '',
       selectedModule: modFilter || '',
+      userRole: req.session.user.role_type,
     });
   } catch (err) {
     console.error('Tasks fetch error:', err.message);
     res.render('tasks/index', {
       title: 'My Tasks',
       tasks: [],
+      officialDeadlines: [],
       VALID_MODULES,
       VALID_STATUSES,
       VALID_TASK_TYPES,
+      VALID_DEADLINE_TYPES,
       userModules: VALID_MODULES,
       selectedStatus: '',
       selectedModule: '',
+      userRole: req.session.user.role_type,
       error: 'Failed to load tasks.',
     });
   }
@@ -64,7 +111,7 @@ router.post('/tasks/add', requireAuth, async (req, res) => {
 
   if (!title || !title.trim()) errors.push('Task title is required.');
   if (title && title.trim().length > 100) errors.push('Title must be under 100 characters.');
-  if (!mod || !VALID_MODULES.includes(mod)) errors.push('Please select a valid module.');
+  if (!mod || !isValidModule(mod)) errors.push('Please select a valid module.');
   if (!due_date) errors.push('Due date is required.');
   if (due_date) {
     const today = new Date(); today.setHours(0, 0, 0, 0);
@@ -78,15 +125,24 @@ router.post('/tasks/add', requireAuth, async (req, res) => {
       'SELECT * FROM tasks WHERE user_id = ? ORDER BY due_date ASC',
       [req.session.userId]
     );
+    const [officialDeadlines] = await pool.execute(
+      `SELECT od.*, u.full_name AS created_by_name FROM official_deadlines od
+       JOIN users u ON od.created_by = u.user_id
+       WHERE od.due_date >= ? ORDER BY od.due_date ASC`,
+      [new Date().toISOString().split('T')[0]]
+    );
     return res.render('tasks/index', {
       title: 'My Tasks',
       tasks,
+      officialDeadlines,
       VALID_MODULES,
       VALID_STATUSES,
       VALID_TASK_TYPES,
+      VALID_DEADLINE_TYPES,
       userModules: VALID_MODULES,
       selectedStatus: '',
       selectedModule: '',
+      userRole: req.session.user.role_type,
       error: errors.join(' '),
       form: req.body,
     });
@@ -131,7 +187,7 @@ router.post('/tasks/edit/:id', requireAuth, async (req, res) => {
 
   if (!title || !title.trim()) errors.push('Task title is required.');
   if (title && title.trim().length > 100) errors.push('Title must be under 100 characters.');
-  if (!mod || !VALID_MODULES.includes(mod)) errors.push('Please select a valid module.');
+  if (!mod || !isValidModule(mod)) errors.push('Please select a valid module.');
   if (!due_date) errors.push('Due date is required.');
   if (!VALID_STATUSES.includes(status)) errors.push('Invalid status selected.');
   if (!VALID_TASK_TYPES.includes(task_type)) errors.push('Invalid task type selected.');
@@ -172,6 +228,68 @@ router.post('/tasks/delete/:id', requireAuth, async (req, res) => {
     res.redirect('/tasks');
   } catch (err) {
     console.error('Delete task error:', err.message);
+    res.redirect('/tasks');
+  }
+});
+
+router.get('/official-deadlines/new', requireAuth, (req, res) => {
+  const role = req.session.user.role_type;
+  if (role !== 'Teacher' && role !== 'Admin') return res.redirect('/tasks');
+
+  res.render('tasks/official_deadline_form', {
+    title: 'Post Official Deadline',
+    VALID_MODULES,
+    VALID_DEADLINE_TYPES,
+    error: null,
+  });
+});
+
+router.post('/official-deadlines/add', requireAuth, async (req, res) => {
+  const role = req.session.user.role_type;
+  if (role !== 'Teacher' && role !== 'Admin') return res.redirect('/tasks');
+
+  const { title, description, module: mod, deadline_type, due_date } = req.body;
+  const errors = [];
+
+  if (!title || !title.trim()) errors.push('Title is required.');
+  if (!mod || !isValidModule(mod)) errors.push('Please select a valid module.');
+  if (!deadline_type || !VALID_DEADLINE_TYPES.includes(deadline_type)) errors.push('Please select a valid type.');
+  if (!due_date) errors.push('Due date is required.');
+
+  if (errors.length > 0) {
+    return res.render('tasks/official_deadline_form', {
+      title: 'Post Official Deadline',
+      VALID_MODULES,
+      VALID_DEADLINE_TYPES,
+      error: errors.join(' '),
+      form: req.body,
+    });
+  }
+
+  try {
+    await pool.execute(
+      'INSERT INTO official_deadlines (title, description, module, deadline_type, due_date, created_by) VALUES (?, ?, ?, ?, ?, ?)',
+      [title.trim(), description || '', mod, deadline_type, due_date, req.session.userId]
+    );
+    res.redirect('/tasks');
+  } catch (err) {
+    console.error('Add official deadline error:', err.message);
+    res.redirect('/tasks');
+  }
+});
+
+router.post('/official-deadlines/delete/:id', requireAuth, async (req, res) => {
+  const role = req.session.user.role_type;
+  if (role !== 'Teacher' && role !== 'Admin') return res.redirect('/tasks');
+
+  try {
+    await pool.execute(
+      'DELETE FROM official_deadlines WHERE deadline_id = ?',
+      [req.params.id]
+    );
+    res.redirect('/tasks');
+  } catch (err) {
+    console.error('Delete official deadline error:', err.message);
     res.redirect('/tasks');
   }
 });

@@ -9,6 +9,7 @@ const adminRoutes = require('./routes/admin');
 const taskRoutes = require('./routes/tasks');
 const studyGroupRoutes = require('./routes/studygroups');
 const homeRoutes = require('./routes/home');
+const marketplaceRoutes = require('./routes/marketplace');
 const announcementsRoutes = require('./routes/announcements');
 
 const app = express();
@@ -34,6 +35,7 @@ app.use('/', authRoutes);
 app.use('/admin', adminRoutes);
 app.use('/', taskRoutes);
 app.use('/', studyGroupRoutes);
+app.use('/marketplace', marketplaceRoutes);
 app.use('/', homeRoutes);
 app.use('/', announcementsRoutes);
 
