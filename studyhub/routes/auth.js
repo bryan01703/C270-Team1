@@ -40,7 +40,7 @@ router.post('/auth/register', async (req, res) => {
 
     const [result] = await pool.execute(
       `INSERT INTO users (username, password_hash, full_name, role_type, class_codes, bio)
-       VALUES (?, ?, ?, 'Student', ?, ?)`,
+      VALUES (?, ?, ?, 'Student', ?, ?)`,
       [username, password_hash, full_name, classCodesStr, bio || '']
     );
 

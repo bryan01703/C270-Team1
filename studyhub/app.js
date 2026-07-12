@@ -10,6 +10,7 @@ const taskRoutes = require('./routes/tasks');
 const studyGroupRoutes = require('./routes/studygroups');
 const homeRoutes = require('./routes/home');
 const marketplaceRoutes = require('./routes/marketplace');
+const announcementsRoutes = require('./routes/announcements');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -36,6 +37,7 @@ app.use('/', taskRoutes);
 app.use('/', studyGroupRoutes);
 app.use('/marketplace', marketplaceRoutes);
 app.use('/', homeRoutes);
+app.use('/', announcementsRoutes);
 
 app.get('/', (req, res) => {
   if (req.session.userId) return res.redirect('/home');

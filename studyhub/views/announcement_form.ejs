@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f6f9; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .btn { padding: 10px 15px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem; text-decoration: none; }
+        .btn-secondary { background: #6c757d; display: inline-block; text-align: center; }
+        .error-msg { color: #dc3545; background: #f8d7da; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📝 <%= title %></h1>
+
+        <% if (error) { %>
+            <div class="error-msg"><%= error %></div>
+        <% } %>
+
+        <form action="/announcements" method="POST">
+            <div class="form-group">
+                <label for="title">Announcement Title *</label>
+                <input type="text" id="title" name="title" required placeholder="e.g., Midterm Exam Location Details">
+            </div>
+
+            <div class="form-group">
+                <label for="module_code">Target Module *</label>
+                <select id="module_code" name="module_code" required>
+                    <option value="">-- Select a Module --</option>
+                    <% modules.forEach(mod => { %>
+                        <option value="<%= mod.code %>"><%= mod.code %> - <%= mod.name %></option>
+                    <% }) %>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="class_section">Class Section</label>
+                <input type="text" id="class_section" name="class_section" placeholder="e.g., All, G1, G2 (Defaults to 'All' if blank)">
+            </div>
+
+            <div class="form-group">
+                <label for="priority">Priority Level</label>
+                <select id="priority" name="priority">
+                    <option value="Normal">Normal</option>
+                    <option value="High">High</option>
+                    <option value="Low">Low</option>
+                    </select>
+            </div>
+
+            <div class="form-group">
+                <label for="content">Announcement Content *</label>
+                <textarea id="content" name="content" rows="6" required placeholder="Type your detailed message announcement here..."></textarea>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button type="submit" class="btn">Post Announcement</button>
+                <a href="/announcements" class="btn btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

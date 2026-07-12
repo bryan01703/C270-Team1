@@ -1,3 +1,4 @@
+
 CREATE DATABASE IF NOT EXISTS studyhub;
 USE studyhub;
 
@@ -34,4 +35,26 @@ CREATE TABLE IF NOT EXISTS official_deadlines (
   created_by INT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (created_by) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS announcements (
+  announcement_id INT AUTO_INCREMENT PRIMARY KEY,
+  title VARCHAR(255) NOT NULL,
+  content TEXT NOT NULL,
+  module_code VARCHAR(10) NOT NULL,
+  class_section VARCHAR(20) DEFAULT 'All', -- e.g., 'C270-A', 'C270-B', or 'All'
+  priority VARCHAR(20) DEFAULT 'Normal',  -- 'Low', 'Normal', 'High', 'Urgent'
+  created_by INT NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (created_by) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS announcement_audit (
+  audit_id INT AUTO_INCREMENT PRIMARY KEY,
+  announcement_id INT NOT NULL,
+  action VARCHAR(20) NOT NULL,
+  performed_by INT NOT NULL,
+  performed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  title_snapshot VARCHAR(255),
+  FOREIGN KEY (performed_by) REFERENCES users(user_id) ON DELETE CASCADE
 );

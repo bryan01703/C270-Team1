@@ -1,3 +1,4 @@
+require('dotenv').config();
 const mysql = require('mysql2/promise');
 
 async function init() {
@@ -21,6 +22,19 @@ async function init() {
   )`);
 
   console.log('Database initialized successfully.');
+    //creating announcement table
+  await conn.query(`CREATE TABLE IF NOT EXISTS announcements (
+    announcement_id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    content TEXT NOT NULL,
+    module_code VARCHAR(10) NOT NULL,
+    class_section VARCHAR(50) DEFAULT 'All',
+    priority VARCHAR(20) DEFAULT 'Normal',
+    created_by INT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (created_by) REFERENCES users(user_id) ON DELETE CASCADE
+  )`);
+
   await conn.end();
 }
 
