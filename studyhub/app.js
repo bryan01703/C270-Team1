@@ -12,6 +12,7 @@ const studyGroupRoutes = require('./routes/studygroups');
 const homeRoutes = require('./routes/home');
 const marketplaceRoutes = require('./routes/marketplace');
 const announcementsRoutes = require('./routes/announcements');
+const seedAdmin = require('./database/seed_admin');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -62,4 +63,5 @@ app.get('/unauthorized', (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`StudyHub running at http://localhost:${PORT}`);
+  seedAdmin().catch(err => console.error('Admin seed failed:', err.message));
 });
