@@ -45,7 +45,7 @@ router.get('/studygroups', requireAuth, async (req, res) => {
     );
     const joinedIds = joinedRows.map(r => r.group_id);
 
-    res.render('studygroups', {
+    res.render('studyGroups', {
       title: 'Study Group Board',
       groups,
       modules: MODULES,
@@ -55,7 +55,7 @@ router.get('/studygroups', requireAuth, async (req, res) => {
     });
   } catch (err) {
     console.error('Fetch study groups error:', err.message);
-    res.render('studygroups', {
+    res.render('studyGroups', {
       title: 'Study Group Board',
       groups: [],
       modules: MODULES,
