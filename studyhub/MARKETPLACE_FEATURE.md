@@ -5,7 +5,7 @@ This add-on creates a `/marketplace` page for StudyHub without adding new `.ejs`
 ## Files added
 
 - `routes/marketplace.js` — all marketplace routes and HTML rendering are kept in this route file.
-- `database/marketplace_notes.sql` — table creation SQL.
+- `database/init.sql` — includes the `marketplace_notes` table definition.
 - `database/migrate_marketplace.js` — Node migration helper.
 - `uploads/marketplace/.gitkeep` — keeps the upload folder in Git while ignoring uploaded files.
 
@@ -30,11 +30,10 @@ From the `studyhub` folder:
 
 ```powershell
 npm install
-npm run migrate:marketplace
 npm start
 ```
 
-Or run `database/marketplace_notes.sql` manually in MySQL Workbench.
+The `marketplace_notes` table is created automatically by `database/init.sql` on first database startup.
 
 ## Seeded accounts found
 

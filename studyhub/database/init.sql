@@ -1,6 +1,10 @@
 CREATE DATABASE IF NOT EXISTS studyhub;
 USE studyhub;
 
+-- ============================================================
+-- Core tables (no FK dependencies)
+-- ============================================================
+
 CREATE TABLE IF NOT EXISTS users (
   user_id INT AUTO_INCREMENT PRIMARY KEY,
   username VARCHAR(50) UNIQUE NOT NULL,
@@ -11,6 +15,22 @@ CREATE TABLE IF NOT EXISTS users (
   role_type VARCHAR(20) DEFAULT 'Student',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+CREATE TABLE IF NOT EXISTS modules (
+  module_code VARCHAR(20) PRIMARY KEY,
+  module_name VARCHAR(150) NOT NULL,
+  credits DECIMAL(5,2) NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS grade_scale (
+  letter_grade VARCHAR(10) PRIMARY KEY,
+  minimum_percentage DECIMAL(5,2) NOT NULL,
+  grade_point DECIMAL(4,2) NOT NULL
+);
+
+-- ============================================================
+-- Tables with single-level FK dependencies
+-- ============================================================
 
 CREATE TABLE IF NOT EXISTS tasks (
   task_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -41,8 +61,8 @@ CREATE TABLE IF NOT EXISTS announcements (
   title VARCHAR(255) NOT NULL,
   content TEXT NOT NULL,
   module_code VARCHAR(10) NOT NULL,
-  class_section VARCHAR(20) DEFAULT 'All', -- e.g., 'C270-A', 'C270-B', or 'All'
-  priority VARCHAR(20) DEFAULT 'Normal',  -- 'Low', 'Normal', 'High', 'Urgent'
+  class_section VARCHAR(20) DEFAULT 'All',
+  priority VARCHAR(20) DEFAULT 'Normal',
   created_by INT NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (created_by) REFERENCES users(user_id) ON DELETE CASCADE
@@ -73,6 +93,44 @@ CREATE TABLE IF NOT EXISTS study_groups (
   FOREIGN KEY (created_by) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS certifications (
+  cert_id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  name VARCHAR(150) NOT NULL,
+  provider VARCHAR(100) NOT NULL,
+  status ENUM('In Progress', 'Completed') NOT NULL DEFAULT 'In Progress',
+  target_date DATE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS module_assessments (
+  module_code VARCHAR(20) NOT NULL,
+  assessment_code VARCHAR(50) NOT NULL,
+  assessment_name VARCHAR(150) NOT NULL,
+  weight DECIMAL(5,2) NOT NULL,
+  PRIMARY KEY (module_code, assessment_code),
+  FOREIGN KEY (module_code) REFERENCES modules(module_code) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS marketplace_notes (
+  note_id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  title VARCHAR(255) NOT NULL,
+  description TEXT NOT NULL,
+  module VARCHAR(50) NOT NULL,
+  price VARCHAR(50) NOT NULL DEFAULT 'Free',
+  file_name VARCHAR(255),
+  file_path VARCHAR(255),
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+-- ============================================================
+-- Tables with multi-level FK dependencies
+-- ============================================================
+
 CREATE TABLE IF NOT EXISTS study_group_members (
   group_id INT NOT NULL,
   user_id INT NOT NULL,
@@ -82,46 +140,6 @@ CREATE TABLE IF NOT EXISTS study_group_members (
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS certifications (
-  cert_id INT AUTO_INCREMENT PRIMARY KEY,
-  user_id INT NOT NULL,
-  name VARCHAR(150) NOT NULL,
-  provider VARCHAR(100) NOT NULL,
-  status ENUM('In Progress', 'Completed') NOT NULL DEFAULT 'In Progress',
-  target_date DATE,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-); 
-
--- Stores modules available to students
-CREATE TABLE IF NOT EXISTS modules (
-  module_code VARCHAR(20) PRIMARY KEY,
-  module_name VARCHAR(150) NOT NULL,
-  credits DECIMAL(5,2) NOT NULL
-);
-
--- Stores assessment components and their weightings
-CREATE TABLE IF NOT EXISTS module_assessments (
-  module_code VARCHAR(20) NOT NULL,
-  assessment_code VARCHAR(50) NOT NULL,
-  assessment_name VARCHAR(150) NOT NULL,
-  weight DECIMAL(5,2) NOT NULL,
-
-  PRIMARY KEY (module_code, assessment_code),
-
-  FOREIGN KEY (module_code)
-    REFERENCES modules(module_code)
-    ON DELETE CASCADE
-);
-
--- Stores the grading scale configured by your institution
-CREATE TABLE IF NOT EXISTS grade_scale (
-  letter_grade VARCHAR(10) PRIMARY KEY,
-  minimum_percentage DECIMAL(5,2) NOT NULL,
-  grade_point DECIMAL(4,2) NOT NULL
-);
-
--- Stores each student's assessment score
 CREATE TABLE IF NOT EXISTS grades (
   grade_id INT AUTO_INCREMENT PRIMARY KEY,
   user_id INT NOT NULL,
@@ -130,44 +148,35 @@ CREATE TABLE IF NOT EXISTS grades (
   score DECIMAL(8,2) NOT NULL,
   maximum_score DECIMAL(8,2) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
-  UNIQUE KEY unique_student_assessment
-    (user_id, module_code, assessment_code),
-
-  FOREIGN KEY (user_id)
-    REFERENCES users(user_id)
-    ON DELETE CASCADE,
-
-  FOREIGN KEY (module_code, assessment_code)
-    REFERENCES module_assessments(module_code, assessment_code)
-    ON DELETE CASCADE
+  UNIQUE KEY unique_student_assessment (user_id, module_code, assessment_code),
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+  FOREIGN KEY (module_code, assessment_code) REFERENCES module_assessments(module_code, assessment_code) ON DELETE CASCADE
 );
 
--- Stores which announcements each student has read
 CREATE TABLE IF NOT EXISTS announcement_reads (
   announcement_id INT NOT NULL,
   user_id INT NOT NULL,
   read_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-
   PRIMARY KEY (announcement_id, user_id),
-
-  FOREIGN KEY (announcement_id)
-    REFERENCES announcements(announcement_id)
-    ON DELETE CASCADE,
-
-  FOREIGN KEY (user_id)
-    REFERENCES users(user_id)
-    ON DELETE CASCADE
-
+  FOREIGN KEY (announcement_id) REFERENCES announcements(announcement_id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS certifications (
-  cert_id INT AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE IF NOT EXISTS user_assessment_weights (
   user_id INT NOT NULL,
-  name VARCHAR(150) NOT NULL,
-  provider VARCHAR(100) NOT NULL,
-  status ENUM('In Progress', 'Completed') NOT NULL DEFAULT 'In Progress',
-  target_date DATE,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
-); 
+  module_code VARCHAR(20) NOT NULL,
+  assessment_code VARCHAR(50) NOT NULL,
+  weight DECIMAL(5,2) NOT NULL,
+  PRIMARY KEY (user_id, module_code, assessment_code),
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+  FOREIGN KEY (module_code, assessment_code) REFERENCES module_assessments(module_code, assessment_code) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS user_module_credits (
+  user_id INT NOT NULL,
+  module_code VARCHAR(20) NOT NULL,
+  credits DECIMAL(5,2) NOT NULL,
+  PRIMARY KEY (user_id, module_code),
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+  FOREIGN KEY (module_code) REFERENCES modules(module_code) ON DELETE CASCADE
+);

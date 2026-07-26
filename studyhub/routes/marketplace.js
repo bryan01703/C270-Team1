@@ -337,7 +337,7 @@ router.get('/', requireAuth, async (req, res) => {
   } catch (err) {
     console.error('Marketplace load error:', err.message);
     renderIndex(req, res, [], {
-      error: 'Failed to load marketplace notes. Run database/marketplace_notes.sql or npm run migrate:marketplace first.',
+      error: 'Failed to load marketplace notes. Ensure the database schema is up to date (see database/init.sql).',
     });
   }
 });
