@@ -65,22 +65,7 @@ body {
     background: #fbd5d5;
 }
 
-.modal-btn-delete {
-    display: inline-block;
-    padding: 8px 20px;
-    border: none;
-    border-radius: 999px;
-    background: #dc3545;
-    color: white;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 12px;
-}
 
-.modal-btn-delete:hover {
-    background: #b91c1c;
-}
 
 /* filter bar - now chip style instead of dropdowns */
 .filter-card {
@@ -152,28 +137,6 @@ body {
     .announcement-grid {
     grid-template-columns: 1fr;
     }
-}
-
-.announcement-card {
-    background: white;
-    border-radius: 12px;
-    padding: 16px;
-    display: flex;
-    gap: 12px;
-    cursor: pointer;
-    border-left: none;
-    box-shadow: none;
-    transition: transform 0.15s ease;
-}
-
-.announcement-card:hover {
-    transform: translateY(-2px);
-}
-
-.announcement-card-body {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
 }
 
 .card-title-row {
@@ -378,43 +341,190 @@ body {
     margin-bottom: 20px;
 }
 
-.modal-actions {
-    display: flex;
-    justify-content: flex-end;
+
+/* Read status text */
+.modal-read-status {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding: 0 0.9rem;
+  color: #16a34a;
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
+/* Aligns all modal buttons on the same row */
+#modalContent .modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+/* Removes default form spacing */
+#modalContent .modal-actions form {
+  display: flex;
+  margin: 0;
+}
+
+/* Gives every modal button the same height and alignment */
+#modalContent .modal-actions button,
+#modalContent .modal-actions a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  min-width: 72px;
+  padding: 0 0.9rem;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* Mark as read button */
+#modalContent .modal-btn-read {
+  background: #2563eb;
+  color: white;
+}
+
+/* Edit button */
+#modalContent .modal-btn-edit {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* Delete button */
+#modalContent .modal-btn-delete {
+  background: #dc3545;
+  color: white;
+}
+
+
+/* Main announcement card */
+.announcement-card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 140px;
+  padding: 16px;
+  background: #ffffff;
+  border-radius: 12px;
+  border-left: 5px solid transparent;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.announcement-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Announcement content */
+.announcement-card-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  padding-bottom: 34px;
+}
+
+/* Read announcement */
+.announcement-read {
+  background: #f1f3f5;
+  border-left-color: #cbd5e1;
+}
+
+.announcement-read .announcement-card-body {
+  opacity: 0.6;
+}
+
+/* Unread announcement */
+.announcement-unread {
+  background: #ffffff;
+  border-left-color: #2563eb;
+}
+
+/* Keeps the title and badges aligned */
+.card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.card-title-row h3 {
+  margin-right: auto;
+}
+
+/* Bottom-right action area */
+.announcement-card-actions {
+  position: absolute;
+  right: 16px;
+  bottom: 12px;
+}
+
+.announcement-card-actions form {
+  margin: 0;
+}
+
+/* Smaller mark-as-read button */
+.card-mark-read {
+  height: 28px;
+  padding: 0 0.65rem;
+  border: none;
+  border-radius: 6px;
+  background: #2563eb;
+  color: white;
+  font-family: inherit;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.card-mark-read:hover {
+  background: #1d4ed8;
+}
+
+/* Priority badges */
+.badge-High {
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  color: #be123c;
+}
+
+.badge-Normal {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  color: #c2410c;
+}
+
+.badge-Low {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1d4ed8;
+}
+
+/* Read and unread badges */
 .badge-read {
-  background: #d1fae5;
-  color: #065f46;
+  background: #d1d5db;
+  color: #4b5563;
+  font-weight: 700;
 }
 
 .badge-unread {
   background: #fee2e2;
-  color: #991b1b;
-}
-
-.btn-mark-read,
-.modal-btn-read {
-  background: #2563eb;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  padding: 0.4rem 0.75rem;
-  cursor: pointer;
-}
-
-.modal-btn-edit {
-  display: inline-block;
-  background: #f3f4f6;
-  color: #374151;
-  border-radius: 6px;
-  padding: 0.4rem 0.75rem;
-  text-decoration: none;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  margin-top: 1rem;
+  color: #dc2626;
+  font-weight: 700;
 }

@@ -1,242 +1,362 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
-    <link rel="stylesheet" href="/css/style.css">
-    <link rel="stylesheet" href="/css/announcementstyling.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title><%= title %></title>
+
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/announcementstyling.css">
 </head>
+
 <body>
-    <%- include('partials/nav') %>
+  <%- include('partials/nav') %>
 
-    <div class="page-content">
-            <div class="header">
-                <div>
-                    <h1> <%= title %></h1>
-                    <p class="header-subtitle">Module updates and class notices, all in one place.</p>
-                </div>
-                <% if (userRole === 'Teacher' || userRole === 'Admin') { %>
-                    <a href="/announcements/new" class="btn">+ New Announcement</a>
-                <% } %>
-            </div>
+  <div class="page-content">
+    <div class="header">
+      <div>
+        <h1><%= title %></h1>
+        <p class="header-subtitle">
+          Module updates and class notices, all in one place.
+        </p>
+      </div>
 
-            <!-- filter bar - lets users narrow down the feed by module/priority/section -->
-            <div class="filter-card">
-                <div class="filter-chips">
-                    <a href="/announcements" class="filter-chip <%= !filters.module ? 'active' : '' %>">All</a>
-                    <% modules.forEach(mod => { %>
-                        <a href="/announcements?module=<%= mod.code %>" class="filter-chip <%= filters.module === mod.code ? 'active' : '' %>"><%= mod.code %></a>
-                    <% }) %>
-                </div>
-            </div>
-
-            <div class="filter-card">
-                <form action="/announcements" method="GET" class="filter-form">
-                    <input type="hidden" name="module" value="<%= filters.module %>">
-
-                    <select name="priority">
-                        <option value="">All Priorities</option>
-                        <option value="High" <%= filters.priority === 'High' ? 'selected' : '' %>>High</option>
-                        <option value="Normal" <%= filters.priority === 'Normal' ? 'selected' : '' %>>Medium</option>
-                        <option value="Low" <%= filters.priority === 'Low' ? 'selected' : '' %>>Low</option>
-                    </select>
-
-                    <input type="text" name="section" placeholder="Section (e.g. All, G2)" value="<%= filters.section %>">
-
-                    <button type="submit" class="btn">Filter</button>
-                    <a href="/announcements" class="btn btn-secondary">Reset</a>
-                </form>
-            </div>
-
-            <!-- if there's nothing to show, just say so instead of an empty page -->
-            <% if (announcements.length === 0) { %>
-                <div class="empty-state">
-                    <h3>No announcements posted yet.</h3>
-                    <p>Check back later or change your filter configuration options.</p>
-                </div>
-            <% } else { %>
-                <div class="announcement-grid">
-                    <% announcements.forEach((item, index) => { %>
-                        <div
-                            class="announcement-card"
-                            style="<%= item.priority === 'High'
-                                ? 'border-left-color: #dc3545;'
-                                : '' %>"
-                            onclick="openModal(<%= index %>)"
-                            >
-                            <div class="announcement-card-body">
-                                <div class="card-title-row">
-                                <h3><%= item.title %></h3>
-
-                                <span class="badge badge-<%= item.priority %>">
-                                    <%= item.priority %>
-                                </span>
-
-                                <% if (item.is_read) { %>
-                                    <span class="badge badge-read">
-                                    Read
-                                    </span>
-                                <% } else { %>
-                                    <span class="badge badge-unread">
-                                    Unread
-                                    </span>
-                                <% } %>
-                                </div>
-
-                                <div class="card-meta-row">
-                                <span class="meta-chip">
-                                    <%= item.module_code %>
-                                </span>
-
-                                <span class="meta-chip">
-                                    <%= item.class_section %>
-                                </span>
-                                </div>
-
-                                <p class="preview-text">
-                                <%= item.content %>
-                                </p>
-
-                                <% if (!item.is_read) { %>
-                                <form
-                                    action="/announcements/<%= item.announcement_id %>/read"
-                                    method="POST"
-                                    onclick="event.stopPropagation()"
-                                >
-                                    <button type="submit" class="btn-mark-read">
-                                    Mark as read
-                                    </button>
-                                </form>
-                                <% } %>
-                            </div>
-                            </div>
-                    <% }) %>
-                </div>
-
-                <div class="modal-overlay" id="announcementModal">
-                    <div class="modal-box">
-                        <button class="modal-close" onclick="closeModal()">&times;</button>
-                        <div id="modalContent"></div>
-                    </div>
-                </div>
-            <% } %>
-
-
-                <script>
-                // store all announcement data here so JS can pull it into the modal on click
-                const announcementData = <%- JSON.stringify(announcements) %>;
-                const userRole = "<%= userRole %>";
-
-                // Opens an announcement and displays its available actions.
-                function openModal(index) {
-                    const item = announcementData[index];
-
-                    const canManageAnnouncements =
-                        userRole === 'Teacher' ||
-                        userRole === 'Admin';
-
-                    const editButton = canManageAnnouncements
-                        ? `
-                            <a
-                            href="/announcements/${item.announcement_id}/edit"
-                            class="modal-btn-edit"
-                            >
-                            Edit
-                            </a>
-                        `
-                        : '';
-
-                    const deleteButton = canManageAnnouncements
-                        ? `
-                            <form
-                            action="/announcements/${item.announcement_id}/delete"
-                            method="POST"
-                            onsubmit="return confirm('Delete this announcement?')"
-                            >
-                            <button
-                                type="submit"
-                                class="modal-btn-delete"
-                            >
-                                Delete
-                            </button>
-                            </form>
-                        `
-                        : '';
-
-                    const readButton = item.is_read
-                        ? `
-                            <span class="modal-read-status">
-                            Read
-                            </span>
-                        `
-                        : `
-                            <form
-                            action="/announcements/${item.announcement_id}/read"
-                            method="POST"
-                            >
-                            <button
-                                type="submit"
-                                class="modal-btn-read"
-                            >
-                                Mark as read
-                            </button>
-                            </form>
-                        `;
-
-                    document.getElementById('modalContent').innerHTML = `
-                    <div class="modal-header">
-                        <p class="modal-title">
-                        ${item.title}
-                        </p>
-
-                        <span class="modal-priority-badge ${item.priority}">
-                        ${item.priority}
-                        </span>
-                    </div>
-
-                    <div class="modal-chip-row">
-                        <span class="modal-chip">
-                        ${item.module_code}
-                        </span>
-
-                        <span class="modal-chip">
-                        ${new Date(item.created_at).toLocaleString()}
-                        </span>
-                    </div>
-
-                    <p class="modal-posted-by">
-                        Posted by ${item.poster_name}
-                        (${item.poster_role})
-                    </p>
-
-                    <div class="modal-body-text">
-                        ${item.content}
-                    </div>
-
-                    <div class="modal-actions">
-                        ${readButton}
-                        ${editButton}
-                        ${deleteButton}
-                    </div>
-                    `;
-
-                    document
-                        .getElementById('announcementModal')
-                        .classList.add('active');
-                }
-
-                function closeModal() {
-                    document.getElementById('announcementModal').classList.remove('active');
-                }
-
-                // click outside the box also closes it
-                document.getElementById('announcementModal').addEventListener('click', function(e) {
-                    if (e.target === this) closeModal();
-                });
-                </script>
-
-
+      <% if (userRole === 'Teacher' || userRole === 'Admin') { %>
+        <a href="/announcements/new" class="btn">
+          + New Announcement
+        </a>
+      <% } %>
     </div>
+
+    <!-- Module filter buttons -->
+    <div class="filter-card">
+      <div class="filter-chips">
+        <a
+          href="/announcements"
+          class="filter-chip <%= !filters.module ? 'active' : '' %>"
+        >
+          All
+        </a>
+
+        <% modules.forEach(mod => { %>
+          <a
+            href="/announcements?module=<%= mod.code %>"
+            class="filter-chip <%= filters.module === mod.code
+              ? 'active'
+              : '' %>"
+          >
+            <%= mod.code %>
+          </a>
+        <% }) %>
+      </div>
+    </div>
+
+    <!-- Priority and section filters -->
+    <div class="filter-card">
+      <form
+        action="/announcements"
+        method="GET"
+        class="filter-form"
+      >
+        <input
+          type="hidden"
+          name="module"
+          value="<%= filters.module %>"
+        >
+
+        <select name="priority">
+          <option value="">All Priorities</option>
+
+          <option
+            value="High"
+            <%= filters.priority === 'High'
+              ? 'selected'
+              : '' %>
+          >
+            High
+          </option>
+
+          <option
+            value="Normal"
+            <%= filters.priority === 'Normal'
+              ? 'selected'
+              : '' %>
+          >
+            Normal
+          </option>
+
+          <option
+            value="Low"
+            <%= filters.priority === 'Low'
+              ? 'selected'
+              : '' %>
+          >
+            Low
+          </option>
+        </select>
+
+        <input
+          type="text"
+          name="section"
+          placeholder="Section (e.g. All, G2)"
+          value="<%= filters.section %>"
+        >
+
+        <button type="submit" class="btn">
+          Filter
+        </button>
+
+        <a
+          href="/announcements"
+          class="btn btn-secondary"
+        >
+          Reset
+        </a>
+      </form>
+    </div>
+
+    <!-- Announcement list -->
+    <% if (announcements.length === 0) { %>
+
+      <div class="empty-state">
+        <h3>No announcements posted yet.</h3>
+        <p>
+          Check back later or change your filter configuration.
+        </p>
+      </div>
+
+    <% } else { %>
+
+      <div class="announcement-grid">
+        <% announcements.forEach((item, index) => { %>
+
+          <%
+            const announcementIsRead =
+              Number(item.is_read) === 1;
+          %>
+
+          <div
+            class="announcement-card <%= announcementIsRead
+              ? 'announcement-read'
+              : 'announcement-unread' %>"
+            onclick="openModal(<%= index %>)"
+          >
+            <div class="announcement-card-body">
+              <div class="card-title-row">
+                <h3><%= item.title %></h3>
+
+                <span class="badge badge-<%= item.priority %>">
+                  <%= item.priority %>
+                </span>
+
+                <% if (announcementIsRead) { %>
+                  <span class="badge badge-read">
+                    READ
+                  </span>
+                <% } else { %>
+                  <span class="badge badge-unread">
+                    UNREAD
+                  </span>
+                <% } %>
+              </div>
+
+              <div class="card-meta-row">
+                <span class="meta-chip">
+                  <%= item.module_code %>
+                </span>
+
+                <span class="meta-chip">
+                  <%= item.class_section %>
+                </span>
+              </div>
+
+              <p class="preview-text">
+                <%= item.content %>
+              </p>
+            </div>
+
+            <% if (!announcementIsRead) { %>
+              <div class="announcement-card-actions">
+                <form
+                  action="/announcements/<%= item.announcement_id %>/read"
+                  method="POST"
+                  onclick="event.stopPropagation()"
+                >
+                  <button
+                    type="submit"
+                    class="card-mark-read"
+                  >
+                    Mark as read
+                  </button>
+                </form>
+              </div>
+            <% } %>
+          </div>
+
+        <% }) %>
+      </div>
+
+      <!-- Announcement modal -->
+      <div
+        class="modal-overlay"
+        id="announcementModal"
+      >
+        <div class="modal-box">
+          <button
+            class="modal-close"
+            onclick="closeModal()"
+          >
+            &times;
+          </button>
+
+          <div id="modalContent"></div>
+        </div>
+      </div>
+
+    <% } %>
+
+    <script>
+      // Stores the announcements received from the server.
+      const announcementData =
+        <%- JSON.stringify(announcements) %>;
+
+      // Stores the current user's role.
+      const userRole =
+        <%- JSON.stringify(userRole) %>;
+
+      // Opens the selected announcement modal.
+      function openModal(index) {
+        const item = announcementData[index];
+
+        const isRead =
+          Number(item.is_read) === 1;
+
+        const canManageAnnouncements =
+          userRole === 'Teacher' ||
+          userRole === 'Admin';
+
+        const readButton = isRead
+          ? `
+              <span class="modal-read-status">
+                Read
+              </span>
+            `
+          : `
+              <form
+                action="/announcements/${item.announcement_id}/read"
+                method="POST"
+              >
+                <button
+                  type="submit"
+                  class="modal-btn-read"
+                >
+                  Mark as read
+                </button>
+              </form>
+            `;
+
+        const editButton = canManageAnnouncements
+          ? `
+              <a
+                href="/announcements/${item.announcement_id}/edit"
+                class="modal-btn-edit"
+              >
+                Edit
+              </a>
+            `
+          : '';
+
+        const deleteButton = canManageAnnouncements
+          ? `
+              <form
+                action="/announcements/${item.announcement_id}/delete"
+                method="POST"
+                onsubmit="return confirm(
+                  'Delete this announcement?'
+                )"
+              >
+                <button
+                  type="submit"
+                  class="modal-btn-delete"
+                >
+                  Delete
+                </button>
+              </form>
+            `
+          : '';
+
+        document.getElementById('modalContent').innerHTML = `
+          <div class="modal-header">
+            <p class="modal-title">
+              ${item.title}
+            </p>
+
+            <span class="badge badge-${item.priority}">
+            ${item.priority}
+            </span>
+          </div>
+
+          <div class="modal-chip-row">
+            <span class="modal-chip">
+              ${item.module_code}
+            </span>
+
+            <span class="modal-chip">
+              ${item.class_section}
+            </span>
+
+            <span class="modal-chip">
+              ${new Date(item.created_at).toLocaleString()}
+            </span>
+          </div>
+
+          <p class="modal-posted-by">
+            Posted by ${item.poster_name}
+            (${item.poster_role})
+          </p>
+
+          <div class="modal-body-text">
+            ${item.content}
+          </div>
+
+          <div class="modal-actions">
+            ${readButton}
+            ${editButton}
+            ${deleteButton}
+          </div>
+        `;
+
+        document
+          .getElementById('announcementModal')
+          .classList.add('active');
+      }
+
+      // Closes the announcement modal.
+      function closeModal() {
+        const modal =
+          document.getElementById('announcementModal');
+
+        if (modal) {
+          modal.classList.remove('active');
+        }
+      }
+
+      // Closes the modal when clicking outside its content.
+      const announcementModal =
+        document.getElementById('announcementModal');
+
+      if (announcementModal) {
+        announcementModal.addEventListener(
+          'click',
+          function(event) {
+            if (event.target === this) {
+              closeModal();
+            }
+          }
+        );
+      }
+    </script>
+  </div>
 </body>
 </html>
