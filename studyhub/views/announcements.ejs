@@ -58,19 +58,59 @@
             <% } else { %>
                 <div class="announcement-grid">
                     <% announcements.forEach((item, index) => { %>
-                        <div class="announcement-card" style="<%= item.priority === 'High' ? 'border-left-color: #dc3545;' : '' %>" onclick="openModal(<%= index %>)">
+                        <div
+                            class="announcement-card"
+                            style="<%= item.priority === 'High'
+                                ? 'border-left-color: #dc3545;'
+                                : '' %>"
+                            onclick="openModal(<%= index %>)"
+                            >
                             <div class="announcement-card-body">
                                 <div class="card-title-row">
-                                    <h3><%= item.title %></h3>
-                                    <span class="badge badge-<%= item.priority %>"><%= item.priority %></span>
+                                <h3><%= item.title %></h3>
+
+                                <span class="badge badge-<%= item.priority %>">
+                                    <%= item.priority %>
+                                </span>
+
+                                <% if (item.is_read) { %>
+                                    <span class="badge badge-read">
+                                    Read
+                                    </span>
+                                <% } else { %>
+                                    <span class="badge badge-unread">
+                                    Unread
+                                    </span>
+                                <% } %>
                                 </div>
+
                                 <div class="card-meta-row">
-                                    <span class="meta-chip"><%= item.module_code %></span>
-                                    <span class="meta-chip"><%= item.class_section %></span>
+                                <span class="meta-chip">
+                                    <%= item.module_code %>
+                                </span>
+
+                                <span class="meta-chip">
+                                    <%= item.class_section %>
+                                </span>
                                 </div>
-                                <p class="preview-text"><%= item.content %></p>
+
+                                <p class="preview-text">
+                                <%= item.content %>
+                                </p>
+
+                                <% if (!item.is_read) { %>
+                                <form
+                                    action="/announcements/<%= item.announcement_id %>/read"
+                                    method="POST"
+                                    onclick="event.stopPropagation()"
+                                >
+                                    <button type="submit" class="btn-mark-read">
+                                    Mark as read
+                                    </button>
+                                </form>
+                                <% } %>
                             </div>
-                        </div>
+                            </div>
                     <% }) %>
                 </div>
 
@@ -88,28 +128,102 @@
                 const announcementData = <%- JSON.stringify(announcements) %>;
                 const userRole = "<%= userRole %>";
 
+                // Opens an announcement and displays its available actions.
                 function openModal(index) {
                     const item = announcementData[index];
-                    const canDelete = (userRole === 'Teacher' || userRole === 'Admin');
+
+                    const canManageAnnouncements =
+                        userRole === 'Teacher' ||
+                        userRole === 'Admin';
+
+                    const editButton = canManageAnnouncements
+                        ? `
+                            <a
+                            href="/announcements/${item.announcement_id}/edit"
+                            class="modal-btn-edit"
+                            >
+                            Edit
+                            </a>
+                        `
+                        : '';
+
+                    const deleteButton = canManageAnnouncements
+                        ? `
+                            <form
+                            action="/announcements/${item.announcement_id}/delete"
+                            method="POST"
+                            onsubmit="return confirm('Delete this announcement?')"
+                            >
+                            <button
+                                type="submit"
+                                class="modal-btn-delete"
+                            >
+                                Delete
+                            </button>
+                            </form>
+                        `
+                        : '';
+
+                    const readButton = item.is_read
+                        ? `
+                            <span class="modal-read-status">
+                            Read
+                            </span>
+                        `
+                        : `
+                            <form
+                            action="/announcements/${item.announcement_id}/read"
+                            method="POST"
+                            >
+                            <button
+                                type="submit"
+                                class="modal-btn-read"
+                            >
+                                Mark as read
+                            </button>
+                            </form>
+                        `;
 
                     document.getElementById('modalContent').innerHTML = `
                     <div class="modal-header">
-                        <p class="modal-title">${item.title}</p>
-                        <span class="modal-priority-badge ${item.priority}">${item.priority}</span>
+                        <p class="modal-title">
+                        ${item.title}
+                        </p>
+
+                        <span class="modal-priority-badge ${item.priority}">
+                        ${item.priority}
+                        </span>
                     </div>
+
                     <div class="modal-chip-row">
-                        <span class="modal-chip">${item.module_code}</span>
-                        <span class="modal-chip">${new Date(item.created_at).toLocaleString()}</span>
+                        <span class="modal-chip">
+                        ${item.module_code}
+                        </span>
+
+                        <span class="modal-chip">
+                        ${new Date(item.created_at).toLocaleString()}
+                        </span>
                     </div>
-                    <p class="modal-posted-by">Posted by ${item.poster_name} (${item.poster_role})</p>
-                    <div class="modal-body-text">${item.content}</div>
-                    ${canDelete ? `
-                        <form action="/announcements/${item.announcement_id}/delete" method="POST" onsubmit="return confirm('Delete this announcement?')">
-                        <button type="submit" class="modal-btn-delete">Delete</button>
-                        </form>` : ''}
+
+                    <p class="modal-posted-by">
+                        Posted by ${item.poster_name}
+                        (${item.poster_role})
+                    </p>
+
+                    <div class="modal-body-text">
+                        ${item.content}
+                    </div>
+
+                    <div class="modal-actions">
+                        ${readButton}
+                        ${editButton}
+                        ${deleteButton}
+                    </div>
                     `;
 
-                    document.getElementById('announcementModal').classList.add('active');
+                    document
+                        .getElementById('announcementModal')
+                        .classList.add('active');
                 }
 
                 function closeModal() {

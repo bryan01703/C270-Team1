@@ -382,3 +382,39 @@ body {
     display: flex;
     justify-content: flex-end;
 }
+
+.badge-read {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.badge-unread {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.btn-mark-read,
+.modal-btn-read {
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4rem 0.75rem;
+  cursor: pointer;
+}
+
+.modal-btn-edit {
+  display: inline-block;
+  background: #f3f4f6;
+  color: #374151;
+  border-radius: 6px;
+  padding: 0.4rem 0.75rem;
+  text-decoration: none;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-top: 1rem;
+}
