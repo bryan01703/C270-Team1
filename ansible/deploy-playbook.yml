@@ -1,0 +1,49 @@
+---
+- name: Deploy StudyHub Application
+  hosts: local
+  gather_facts: false
+
+  vars:
+    app_dir: "../studyhub"
+
+  tasks:
+    - name: Verify Docker is installed
+      ansible.builtin.command: docker --version
+      register: docker_version
+      changed_when: false
+
+    - name: Verify Docker Compose is installed
+      ansible.builtin.command: docker compose version
+      register: compose_version
+      changed_when: false
+
+    - name: Ensure application directory exists
+      ansible.builtin.stat:
+        path: "{{ app_dir }}"
+      register: app_path
+
+    - name: Fail if application directory is missing
+      ansible.builtin.fail:
+        msg: "Application directory '{{ app_dir }}' not found."
+      when: not app_path.stat.exists
+
+    - name: Stop existing containers
+      ansible.builtin.command: docker compose down
+      args:
+        chdir: "{{ app_dir }}"
+      register: compose_down
+      changed_when: "'Removed' in compose_down.stdout or 'removed' in compose_down.stdout"
+
+    - name: Build and start containers
+      ansible.builtin.command: docker compose up --build -d
+      args:
+        chdir: "{{ app_dir }}"
+      register: compose_up
+
+    - name: Display deployment success
+      ansible.builtin.debug:
+        msg: |
+          StudyHub stack deployed successfully.
+          Docker: {{ docker_version.stdout }}
+          Compose: {{ compose_version.stdout }}
+          Application running at http://localhost:3000
