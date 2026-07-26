@@ -1,4 +1,3 @@
-
 CREATE DATABASE IF NOT EXISTS studyhub;
 USE studyhub;
 
@@ -161,5 +160,5 @@ CREATE TABLE IF NOT EXISTS announcement_reads (
   FOREIGN KEY (user_id)
     REFERENCES users(user_id)
     ON DELETE CASCADE
->>>>>>> Stashed changes
+
 );

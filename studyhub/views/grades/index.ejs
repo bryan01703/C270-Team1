@@ -2,87 +2,255 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
   <title><%= title %></title>
+
   <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/grades.css">
 </head>
 
 <body>
   <%- include('../partials/nav') %>
 
-  <main class="page-content">
-    <h1>Grade Tracker</h1>
+  <main class="grades-page">
+    <div class="grades-header">
+      <p class="grades-eyebrow">Academic Progress</p>
 
-    <section class="card">
-      <h2>Current GPA</h2>
-      <p style="font-size: 3rem; font-weight: bold;">
+      <h1>Grade Tracker</h1>
+
+      <p>
+        Track your assessment scores and calculate your target grade.
+      </p>
+    </div>
+
+    <section class="gpa-card">
+      <div>
+        <p class="card-eyebrow">Overall Performance</p>
+
+        <h2>Current GPA</h2>
+
+        <p class="gpa-description">
+          Based on completed modules and credits.
+        </p>
+      </div>
+
+      <div class="gpa-value">
         <%= gpa %>
+      </div>
+    </section>
+
+    <section class="module-selector-card">
+      <label for="moduleSelector">
+        Select a module
+      </label>
+
+      <select id="moduleSelector">
+        <option value="">
+          Choose a module
+        </option>
+
+        <% modules.forEach(module => { %>
+          <option value="<%= module.module_code %>">
+            <%= module.module_code %> -
+            <%= module.module_name %>
+          </option>
+        <% }) %>
+      </select>
+
+      <p class="selector-help">
+        Select a module to view and edit its weightings.
       </p>
     </section>
 
-    <% modules.forEach(module => { %>
-      <section class="card">
-        <h2>
-          <%= module.module_code %> -
-          <%= module.module_name %>
-        </h2>
+    <div
+      id="emptyModuleMessage"
+      class="empty-module-message"
+    >
+      <div class="empty-module-icon">
+        📚
+      </div>
 
-        <p>
-          Current weighted score:
-          <strong>
-            <%= module.currentPercentage.toFixed(2) %>%
-          </strong>
-        </p>
+      <h2>Select a module to begin</h2>
 
-        <% if (!module.isComplete) { %>
-          <% if (module.requiredScore <= 0) { %>
-            <p style="color: green;">
-              You have already secured an A.
-            </p>
-          <% } else if (module.requiredScore > 100) { %>
-            <p style="color: red;">
-              An A is no longer mathematically possible.
-            </p>
-          <% } else { %>
-            <p>
-              Required average in remaining assessments for an A:
+      <p>
+        Your assessment tracker will appear here.
+      </p>
+    </div>
+
+    <div id="moduleCards">
+      <% modules.forEach(module => { %>
+        <section
+          class="module-card"
+          data-module-code="<%= module.module_code %>"
+        >
+          <div class="module-card-header">
+            <div>
+              <p class="module-code">
+                <%= module.module_code %>
+              </p>
+
+              <h2>
+                <%= module.module_name %>
+              </h2>
+            </div>
+
+            <div class="module-credits">
+                <form
+                    action="/grades/save-credits"
+                    method="POST"
+                >
+                    <input
+                    type="hidden"
+                    name="module_code"
+                    value="<%= module.module_code %>"
+                    >
+
+                    <input
+                    type="number"
+                    name="credits"
+                    min="0.1"
+                    step="0.1"
+                    value="<%= module.credits %>"
+                    required
+                    >
+
+                    <span>credits</span>
+
+                    <button type="submit">
+                    Save
+                    </button>
+                </form>
+            </div>
+        </div>
+
+          <div class="module-summary">
+            <div class="summary-item">
+              <span>Current weighted score</span>
+
               <strong>
-                <%= module.requiredScore.toFixed(2) %>%
+                <%= module.currentPercentage.toFixed(2) %>%
               </strong>
-            </p>
+            </div>
+
+            <div class="summary-item">
+              <span>Remaining weight</span>
+
+              <strong>
+                <%= module.remainingWeight.toFixed(2) %>%
+              </strong>
+            </div>
+
+            <div class="summary-item">
+              <span>Total weight</span>
+
+              <strong>
+                <%= module.totalWeight.toFixed(2) %>%
+              </strong>
+            </div>
+          </div>
+
+          <% if (!module.isComplete) { %>
+            <% if (module.requiredScore <= 0) { %>
+              <div class="result-message result-success">
+                You have already secured an A.
+              </div>
+            <% } else if (module.requiredScore > 100) { %>
+              <div class="result-message result-danger">
+                An A is no longer mathematically possible.
+              </div>
+            <% } else if (module.requiredScore !== null) { %>
+              <div class="result-message result-info">
+                You need an average of
+                <strong>
+                  <%= module.requiredScore.toFixed(2) %>%
+                </strong>
+                in your remaining assessments to achieve an A.
+              </div>
+            <% } %>
+          <% } else if (module.finalGrade) { %>
+            <div class="result-message result-success">
+              Final grade:
+              <strong>
+                <%= module.finalGrade.letter_grade %>
+              </strong>
+            </div>
           <% } %>
-        <% } else if (module.finalGrade) { %>
-          <p>
-            Final grade:
-            <strong>
-              <%= module.finalGrade.letter_grade %>
-            </strong>
-          </p>
-        <% } %>
 
-        <table>
-          <thead>
-            <tr>
-              <th>Assessment</th>
-              <th>Weight</th>
-              <th>Score</th>
-              <th>Action</th>
-            </tr>
-          </thead>
+          <div class="assessment-section">
+            <div class="section-heading">
+              <div>
+                <p class="card-eyebrow">
+                  Assessment Breakdown
+                </p>
 
-          <tbody>
-            <% module.assessments.forEach(assessment => { %>
-              <tr>
-                <form action="/grades/save" method="POST">
-                  <td>
-                    <%= assessment.assessment_name %>
-                  </td>
+                <h3>Change your weightings</h3>
+              </div>
+            </div>
 
-                  <td>
-                    <%= assessment.weight %>%
-                  </td>
+            <!-- Saves custom weights for this module -->
+            <form
+              id="weights-<%= module.module_code %>"
+              action="/grades/save-weights"
+              method="POST"
+            >
+              <input
+                type="hidden"
+                name="module_code"
+                value="<%= module.module_code %>"
+              >
+            </form>
 
-                  <td>
+            <div class="assessment-list">
+              <% module.assessments.forEach(assessment => { %>
+                <div class="assessment-row">
+                  <div class="assessment-details">
+                    <strong>
+                      <%= assessment.assessment_name %>
+                    </strong>
+
+                    <span>
+                      Assessment score
+                    </span>
+                  </div>
+
+                  <div class="weight-input">
+                    <label>
+                      Weight %
+                    </label>
+
+                    <input
+                      form="weights-<%= module.module_code %>"
+                      type="number"
+                      name="weight_<%= assessment.assessment_code %>"
+                      min="0"
+                      max="100"
+                      step="0.01"
+                      value="<%= assessment.weight %>"
+                      required
+                    >
+                  </div>
+
+                  <form
+                    action="/grades/save"
+                    method="POST"
+                    class="grade-form"
+                  >
+                    <input
+                      type="hidden"
+                      name="module_code"
+                      value="<%= module.module_code %>"
+                    >
+
+                    <input
+                      type="hidden"
+                      name="assessment_code"
+                      value="<%= assessment.assessment_code %>"
+                    >
+
                     <input
                       type="number"
                       name="score"
@@ -93,6 +261,8 @@
                       required
                     >
 
+                    <span class="score-divider">/</span>
+
                     <input
                       type="number"
                       name="maximum_score"
@@ -102,52 +272,101 @@
                       placeholder="Maximum"
                       required
                     >
-                  </td>
 
-                  <td>
-                    <input
-                      type="hidden"
-                      name="module_code"
-                      value="<%= module.module_code %>"
+                    <button
+                      type="submit"
+                      class="save-grade-button"
                     >
-
-                    <input
-                      type="hidden"
-                      name="assessment_code"
-                      value="<%= assessment.assessment_code %>"
-                    >
-
-                    <button type="submit">
                       Save
                     </button>
-                </form>
-
-                <% if (assessment.score !== null) { %>
-                  <form action="/grades/delete" method="POST">
-                    <input
-                      type="hidden"
-                      name="module_code"
-                      value="<%= module.module_code %>"
-                    >
-
-                    <input
-                      type="hidden"
-                      name="assessment_code"
-                      value="<%= assessment.assessment_code %>"
-                    >
-
-                    <button type="submit">
-                      Delete
-                    </button>
                   </form>
-                <% } %>
-                  </td>
-              </tr>
-            <% }) %>
-          </tbody>
-        </table>
-      </section>
-    <% }) %>
+
+                  <% if (assessment.score !== null) { %>
+                    <form
+                      action="/grades/delete"
+                      method="POST"
+                      class="delete-form"
+                    >
+                      <input
+                        type="hidden"
+                        name="module_code"
+                        value="<%= module.module_code %>"
+                      >
+
+                      <input
+                        type="hidden"
+                        name="assessment_code"
+                        value="<%= assessment.assessment_code %>"
+                      >
+
+                      <button
+                        type="submit"
+                        class="delete-grade-button"
+                      >
+                        Delete
+                      </button>
+                    </form>
+                  <% } %>
+                </div>
+              <% }) %>
+            </div>
+
+            <button
+              type="submit"
+              form="weights-<%= module.module_code %>"
+              class="save-weight-button"
+            >
+              Save Weightings
+            </button>
+
+            <p class="weight-help">
+              All assessment weightings must add up to 100%.
+            </p>
+          </div>
+        </section>
+      <% }) %>
+    </div>
   </main>
+
+  <script>
+    // Gets the module selector.
+    const moduleSelector =
+      document.getElementById('moduleSelector');
+
+    // Gets all module cards.
+    const moduleCards =
+      document.querySelectorAll('.module-card');
+
+    // Gets the empty state message.
+    const emptyModuleMessage =
+      document.getElementById('emptyModuleMessage');
+
+    // Shows only the selected module.
+    moduleSelector.addEventListener('change', function() {
+      const selectedModule = this.value;
+
+      if (!selectedModule) {
+        emptyModuleMessage.classList.remove('hidden');
+
+        moduleCards.forEach(card => {
+          card.classList.remove('visible');
+        });
+
+        return;
+      }
+
+      emptyModuleMessage.classList.add('hidden');
+
+      moduleCards.forEach(card => {
+        const cardModule =
+          card.dataset.moduleCode;
+
+        card.classList.toggle(
+          'visible',
+          cardModule === selectedModule
+        );
+      });
+    });
+  </script>
 </body>
 </html>
