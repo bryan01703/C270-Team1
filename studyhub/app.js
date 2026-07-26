@@ -4,6 +4,7 @@ const express = require('express');
 const session = require('express-session');
 const path = require('path');
 
+const gradeRoutes = require('./routes/grades');
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
 const taskRoutes = require('./routes/tasks');
@@ -31,6 +32,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use('/', gradeRoutes);
 app.use('/', authRoutes);
 app.use('/admin', adminRoutes);
 app.use('/', taskRoutes);

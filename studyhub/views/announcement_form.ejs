@@ -1,68 +1,252 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 20px; background-color: #f4f6f9; color: #333; }
-        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
-        .btn { padding: 10px 15px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 1rem; text-decoration: none; }
-        .btn-secondary { background: #6c757d; display: inline-block; text-align: center; }
-        .error-msg { color: #dc3545; background: #f8d7da; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-weight: bold; }
-    </style>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title><%= title %> - StudyHub</title>
+
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/announcementform.css">
 </head>
+
 <body>
-    <div class="container">
-        <h1>📝 <%= title %></h1>
+  <%- include('partials/nav') %>
 
-        <% if (error) { %>
-            <div class="error-msg"><%= error %></div>
-        <% } %>
+  <main class="announcement-form-page">
+    <div class="announcement-form-header">
+      <div>
+        <p class="form-eyebrow">
+          Announcement Management
+        </p>
 
-        <form action="/announcements" method="POST">
-            <div class="form-group">
-                <label for="title">Announcement Title *</label>
-                <input type="text" id="title" name="title" required placeholder="e.g., Midterm Exam Location Details">
-            </div>
+        <h1>
+          <%= title %>
+        </h1>
 
-            <div class="form-group">
-                <label for="module_code">Target Module *</label>
-                <select id="module_code" name="module_code" required>
-                    <option value="">-- Select a Module --</option>
-                    <% modules.forEach(mod => { %>
-                        <option value="<%= mod.code %>"><%= mod.code %> - <%= mod.name %></option>
-                    <% }) %>
-                </select>
-            </div>
+        <p>
+          Share important updates with your classmates.
+        </p>
+      </div>
 
-            <div class="form-group">
-                <label for="class_section">Class Section</label>
-                <input type="text" id="class_section" name="class_section" placeholder="e.g., All, G1, G2 (Defaults to 'All' if blank)">
-            </div>
-
-            <div class="form-group">
-                <label for="priority">Priority Level</label>
-                <select id="priority" name="priority">
-                    <option value="Normal">Normal</option>
-                    <option value="High">High</option>
-                    <option value="Low">Low</option>
-                    </select>
-            </div>
-
-            <div class="form-group">
-                <label for="content">Announcement Content *</label>
-                <textarea id="content" name="content" rows="6" required placeholder="Type your detailed message announcement here..."></textarea>
-            </div>
-
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button type="submit" class="btn">Post Announcement</button>
-                <a href="/announcements" class="btn btn-secondary">Cancel</a>
-            </div>
-        </form>
+      <a
+        href="/announcements"
+        class="back-button"
+      >
+        Back to Announcements
+      </a>
     </div>
+
+    <section class="announcement-form-card">
+      <%
+        const editing = Boolean(locals.isEdit);
+        const currentAnnouncement =
+          locals.announcement || {};
+      %>
+
+      <% if (locals.error) { %>
+        <div class="form-error">
+          <%= error %>
+        </div>
+      <% } %>
+
+      <form
+        action="<%= editing
+          ? '/announcements/' +
+            currentAnnouncement.announcement_id +
+            '/edit'
+          : '/announcements' %>"
+        method="POST"
+        class="announcement-form"
+      >
+        <div class="form-section-heading">
+          <h2>
+            <%= editing
+              ? 'Edit Announcement'
+              : 'Create Announcement' %>
+          </h2>
+
+          <p>
+            Fields marked with
+            <span>*</span>
+            are required.
+          </p>
+        </div>
+
+        <div class="form-group full-width">
+          <label for="title">
+            Announcement Title
+            <span>*</span>
+          </label>
+
+          <input
+            id="title"
+            type="text"
+            name="title"
+            maxlength="255"
+            placeholder="Enter an announcement title"
+            value="<%= editing
+              ? currentAnnouncement.title
+              : '' %>"
+            required
+          >
+        </div>
+
+        <div class="form-group full-width">
+          <label for="content">
+            Announcement Content
+            <span>*</span>
+          </label>
+
+          <textarea
+            id="content"
+            name="content"
+            rows="7"
+            placeholder="Write your announcement here..."
+            required
+          ><%= editing
+            ? currentAnnouncement.content
+            : '' %></textarea>
+
+          <small>
+            Keep your message clear and easy to understand.
+          </small>
+        </div>
+
+        <div class="form-group">
+          <label for="module_code">
+            Module
+            <span>*</span>
+          </label>
+
+          <select
+            id="module_code"
+            name="module_code"
+            required
+          >
+            <option value="">
+              Select a module
+            </option>
+
+            <% modules.forEach(module => { %>
+              <option
+                value="<%= module.code %>"
+                <%= editing &&
+                  currentAnnouncement.module_code ===
+                  module.code
+                  ? 'selected'
+                  : '' %>
+              >
+                <%= module.code %> -
+                <%= module.name %>
+              </option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="class_section">
+            Class Section
+          </label>
+
+          <input
+            id="class_section"
+            type="text"
+            name="class_section"
+            placeholder="Example: C270-010"
+            value="<%= editing
+              ? currentAnnouncement.class_section
+              : 'All' %>"
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="priority">
+            Priority
+            <span>*</span>
+          </label>
+
+          <select
+            id="priority"
+            name="priority"
+            required
+          >
+            <% ['Low', 'Normal', 'High'].forEach(priority => { %>
+              <option
+                value="<%= priority %>"
+                <%= editing &&
+                  currentAnnouncement.priority === priority
+                  ? 'selected'
+                  : '' %>
+              >
+                <%= priority %>
+              </option>
+            <% }) %>
+          </select>
+        </div>
+
+        <div class="form-preview">
+          <p class="preview-label">
+            Priority Preview
+          </p>
+
+          <span
+            id="priorityPreview"
+            class="priority-preview priority-normal"
+          >
+            Normal
+          </span>
+        </div>
+
+        <div class="form-actions full-width">
+          <a
+            href="/announcements"
+            class="cancel-button"
+          >
+            Cancel
+          </a>
+
+          <button
+            type="submit"
+            class="submit-button"
+          >
+            <%= editing
+              ? 'Save Changes'
+              : 'Post Announcement' %>
+          </button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    // Updates the priority preview when the priority changes.
+    const prioritySelect =
+      document.getElementById('priority');
+
+    const priorityPreview =
+      document.getElementById('priorityPreview');
+
+    function updatePriorityPreview() {
+      const selectedPriority =
+        prioritySelect.value.toLowerCase();
+
+      priorityPreview.textContent =
+        prioritySelect.value;
+
+      priorityPreview.className =
+        `priority-preview priority-${selectedPriority}`;
+    }
+
+    prioritySelect.addEventListener(
+      'change',
+      updatePriorityPreview
+    );
+
+    updatePriorityPreview();
+  </script>
 </body>
 </html>

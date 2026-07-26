@@ -1,0 +1,412 @@
+.grades-page {
+  max-width: 1050px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.grades-header {
+  margin-bottom: 1.5rem;
+}
+
+.grades-eyebrow,
+.card-eyebrow,
+.module-code {
+  margin: 0 0 0.35rem;
+  color: #6366f1;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.grades-header h1 {
+  margin: 0;
+  color: #172033;
+  font-size: 2rem;
+}
+
+.grades-header p:not(.grades-eyebrow) {
+  color: #64748b;
+}
+
+.gpa-card,
+.module-selector-card,
+.module-card,
+.empty-module-message {
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.06);
+}
+
+.gpa-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  padding: 1.5rem;
+}
+
+.gpa-card h2 {
+  margin: 0;
+  color: #172033;
+  font-size: 1.25rem;
+}
+
+.gpa-description {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+.gpa-value {
+  color: #4f46e5;
+  font-size: 3.2rem;
+  font-weight: 800;
+}
+
+.module-selector-card {
+  margin-bottom: 1.25rem;
+  padding: 1.25rem;
+}
+
+.module-selector-card label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #334155;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.module-selector-card select {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #172033;
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+.module-selector-card select:focus {
+  outline: none;
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px #e0e7ff;
+}
+
+.selector-help,
+.weight-help {
+  margin-bottom: 0;
+  color: #94a3b8;
+  font-size: 0.8rem;
+}
+
+.empty-module-message {
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.empty-module-message.hidden {
+  display: none;
+}
+
+.empty-module-icon {
+  margin-bottom: 0.75rem;
+  font-size: 2.5rem;
+}
+
+.empty-module-message h2 {
+  margin: 0;
+  color: #334155;
+  font-size: 1.2rem;
+}
+
+.empty-module-message p {
+  color: #94a3b8;
+}
+
+.module-card {
+  display: none;
+  margin-bottom: 1.25rem;
+  overflow: hidden;
+}
+
+.module-card.visible {
+  display: block;
+}
+
+.module-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: linear-gradient(
+    135deg,
+    #eef2ff,
+    #ffffff
+  );
+}
+
+.module-card-header h2 {
+  margin: 0;
+  color: #172033;
+  font-size: 1.4rem;
+}
+
+.module-credits {
+  min-width: 72px;
+  padding: 0.6rem;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #64748b;
+  font-size: 0.72rem;
+  text-align: center;
+}
+
+.module-credits span {
+  display: block;
+  color: #4f46e5;
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.module-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #eef2f7;
+}
+
+.summary-item {
+  padding: 0.75rem;
+  border-radius: 10px;
+  background: #f8fafc;
+}
+
+.summary-item span {
+  display: block;
+  margin-bottom: 0.3rem;
+  color: #64748b;
+  font-size: 0.75rem;
+}
+
+.summary-item strong {
+  color: #172033;
+  font-size: 1rem;
+}
+
+.result-message {
+  margin: 1.25rem 1.5rem 0;
+  padding: 0.9rem 1rem;
+  border-radius: 10px;
+  font-size: 0.88rem;
+}
+
+.result-info {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.result-success {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.result-danger {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.assessment-section {
+  padding: 1.5rem;
+}
+
+.section-heading {
+  margin-bottom: 1rem;
+}
+
+.section-heading h3 {
+  margin: 0;
+  color: #172033;
+  font-size: 1.05rem;
+}
+
+.assessment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.assessment-row {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.9rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.assessment-details {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 120px;
+}
+
+.assessment-details strong {
+  color: #334155;
+}
+
+.assessment-details span,
+.weight-input label {
+  margin-top: 0.25rem;
+  color: #94a3b8;
+  font-size: 0.75rem;
+}
+
+.weight-input {
+  display: flex;
+  flex-direction: column;
+}
+
+.weight-input input,
+.grade-form input {
+  width: 82px;
+  padding: 0.55rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 7px;
+  font-family: inherit;
+  font-size: 0.8rem;
+}
+
+.weight-input input:focus,
+.grade-form input:focus {
+  outline: none;
+  border-color: #6366f1;
+}
+
+.grade-form {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.score-divider {
+  color: #94a3b8;
+  font-weight: 700;
+}
+
+.save-grade-button,
+.delete-grade-button,
+.save-weight-button {
+  border: none;
+  border-radius: 7px;
+  font-family: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.save-grade-button,
+.delete-grade-button {
+  padding: 0.55rem 0.7rem;
+  font-size: 0.78rem;
+}
+
+.save-grade-button,
+.save-weight-button {
+  background: #4f46e5;
+  color: #ffffff;
+}
+
+.save-grade-button:hover,
+.save-weight-button:hover {
+  background: #4338ca;
+}
+
+.delete-form {
+  margin: 0;
+}
+
+.delete-grade-button {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.delete-grade-button:hover {
+  background: #fecaca;
+}
+
+.save-weight-button {
+  margin-top: 1rem;
+  padding: 0.7rem 1rem;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 700px) {
+  .gpa-card,
+  .assessment-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .gpa-value {
+    font-size: 2.5rem;
+  }
+
+  .module-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .grade-form {
+    flex-wrap: wrap;
+  }
+
+  .grade-form input,
+  .weight-input input {
+    width: 100%;
+  }
+}
+
+.module-credits form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  margin: 0;
+}
+
+.module-credits input {
+  width: 58px;
+  padding: 0.35rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  color: #172033;
+  font-family: inherit;
+  font-size: 0.8rem;
+  text-align: center;
+}
+
+.module-credits input:focus {
+  outline: none;
+  border-color: #6366f1;
+}
+
+.module-credits button {
+  padding: 0.25rem 0.5rem;
+  border: none;
+  border-radius: 5px;
+  background: #4f46e5;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 0.7rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.module-credits button:hover {
+  background: #4338ca;
+}
