@@ -17,6 +17,12 @@ jobs:
       - name: Checkout repository code
         uses: actions/checkout@v3
 
+      - name: Install Ansible
+        run: pip install ansible
+
+      - name: Execute Ansible IaC Playbook
+        run: ansible-playbook -i ../ansible/inventory.ini ../ansible/deploy-playbook.yml
+
       - name: Set up Node.js 18 environment
         uses: actions/setup-node@v3
         with:
