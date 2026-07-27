@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: studyhub-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: studyhub.local # Domain name to access our site in the browser
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: studyhub-service
+            port:
+              number: 80 # Matches the port in app.yaml's Service definition
