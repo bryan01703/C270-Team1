@@ -69,5 +69,13 @@
       <p class="mt-2 text-center"><a href="/studygroups">&larr; Back to Board</a></p>
     </div>
   </main>
+
+  <script>
+    // Get today's date in YYYY-MM-DD format
+    const today = new Date().toISOString().split('T')[0];
+    
+    // Set the min attribute so past dates are disabled in the calendar picker
+    document.getElementById('session_date').setAttribute('min', today);
+  </script>
 </body>
 </html>
