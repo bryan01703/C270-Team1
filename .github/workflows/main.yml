@@ -36,3 +36,6 @@ jobs:
 
       - name: Test container build
         run: docker compose build
+
+      - name: Trigger Render Cloud Deployment (CD)
+        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
