@@ -20,14 +20,29 @@
         <div class="alert alert-error"><%= error %></div>
       <% } %>
 
-      <form action="/studygroups" method="GET" class="filter-bar mb-2">
-        <label for="module" style="display:inline; margin-right:0.5rem;">Filter by module:</label>
-        <select id="module" name="module" onchange="this.form.submit()" style="width:auto; display:inline-block;">
-          <option value="">All modules</option>
-          <% modules.forEach(function(m) { %>
-            <option value="<%= m.code %>" <%= selectedModule === m.code ? 'selected' : '' %>><%= m.code %> — <%= m.name %></option>
-          <% }) %>
-        </select>
+      <form action="/studygroups" method="GET" class="filter-bar mb-2" style="display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap;">
+        
+        <!-- Filter 1: Module -->
+        <div>
+          <label for="module" style="display:inline; margin-right:0.5rem;">Filter by module:</label>
+          <select id="module" name="module" onchange="this.form.submit()" style="width:auto; display:inline-block;">
+            <option value="">All modules</option>
+            <% modules.forEach(function(m) { %>
+              <option value="<%= m.code %>" <%= selectedModule === m.code ? 'selected' : '' %>><%= m.code %> — <%= m.name %></option>
+            <% }) %>
+          </select>
+        </div>
+
+        <!-- Filter 2: Host Role (NEW) -->
+        <div>
+          <label for="role" style="display:inline; margin-right:0.5rem;">Filter by host:</label>
+          <select id="role" name="role" onchange="this.form.submit()" style="width:auto; display:inline-block;">
+            <option value="">All hosts</option>
+            <option value="Student" <%= (typeof selectedRole !== 'undefined' && selectedRole === 'Student') ? 'selected' : '' %>>Student</option>
+            <option value="Teacher" <%= (typeof selectedRole !== 'undefined' && selectedRole === 'Teacher') ? 'selected' : '' %>>Teacher</option>
+          </select>
+        </div>
+
       </form>
 
       <% if (groups.length === 0) { %>

@@ -19,7 +19,7 @@ const MODULES = [
 
 async function fetchGroups(whereClause = '', params = []) {
   const [rows] = await pool.execute(
-    `SELECT sg.*, u.full_name AS host_name,
+    `SELECT sg.*, u.full_name AS host_name, u.role_type AS host_role,
             (SELECT COUNT(*) FROM study_group_members m WHERE m.group_id = sg.group_id) AS member_count
      FROM study_groups sg
      JOIN users u ON sg.created_by = u.user_id
@@ -30,13 +30,26 @@ async function fetchGroups(whereClause = '', params = []) {
   return rows;
 }
 
-// Browse listings, optionally filtered by module
+// Browse listings, optionally filtered by module and host role
 router.get('/studygroups', requireAuth, async (req, res) => {
   const moduleFilter = req.query.module || '';
+  const selectedRole = req.query.role || '';
 
   try {
-    const where = moduleFilter ? 'WHERE sg.module_code = ?' : '';
-    const params = moduleFilter ? [moduleFilter] : [];
+    const conditions = [];
+    const params = [];
+
+    if (moduleFilter) {
+      conditions.push('sg.module_code = ?');
+      params.push(moduleFilter);
+    }
+
+    if (selectedRole) {
+      conditions.push('u.role_type = ?');
+      params.push(selectedRole);
+    }
+
+    const where = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : '';
     const groups = await fetchGroups(where, params);
 
     const [joinedRows] = await pool.execute(
@@ -50,6 +63,7 @@ router.get('/studygroups', requireAuth, async (req, res) => {
       groups,
       modules: MODULES,
       selectedModule: moduleFilter,
+      selectedRole, // ADDED: Send selectedRole to EJS
       joinedIds,
       userId: req.session.userId,
     });
@@ -60,6 +74,7 @@ router.get('/studygroups', requireAuth, async (req, res) => {
       groups: [],
       modules: MODULES,
       selectedModule: moduleFilter,
+      selectedRole, // ADDED: Send selectedRole to error view
       joinedIds: [],
       userId: req.session.userId,
       error: 'Failed to load study groups.',
@@ -87,6 +102,20 @@ router.post('/studygroups', requireAuth, async (req, res) => {
       title: 'Post a Study Session',
       modules: MODULES,
       error: 'Please fill in all required fields.',
+      form: req.body,
+    });
+  }
+
+  // Prevent past date
+  const selectedDate = new Date(session_date);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0); // Reset time to midnight for accurate date comparison
+
+  if (selectedDate < today) {
+    return res.render('studygroup_form', {
+      title: 'Post a Study Session',
+      modules: MODULES,
+      error: 'Session date cannot be in the past. Please select today or a future date.',
       form: req.body,
     });
   }

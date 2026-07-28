@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: studyhub-app
+spec:
+  replicas: 2 # Runs 2 identical pods for high availability & load balancing
+  selector:
+    matchLabels:
+      app: studyhub
+  template:
+    metadata:
+      labels:
+        app: studyhub
+    spec:
+      containers:
+      - name: studyhub
+        image: c270team1/studyhub:v1.0 
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
+        env:
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: studyhub-secrets
+              key: DB_HOST
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: studyhub-secrets
+              key: DB_USER
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: studyhub-secrets
+              key: DB_PASSWORD
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: studyhub-secrets
+              key: DB_NAME
+        - name: SESSION_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: studyhub-secrets
+              key: SESSION_SECRET
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: studyhub-service
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80           # The port other services inside the cluster will use
+    targetPort: 3000   # The actual port Express app listens on 
+  selector:
+    app: studyhub
