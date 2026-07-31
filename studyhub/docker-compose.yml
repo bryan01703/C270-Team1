@@ -1,26 +1,26 @@
 services:
-  db:
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: studyhub
-    ports:
-      - "3307:3306"
-    volumes:
-      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
-      - mysql_data:/var/lib/mysql
-
   web:
     build: .
     ports:
       - "3000:3000"
-    environment:
-      DB_HOST: db
-      DB_USER: root
-      DB_PASSWORD: rootpassword
-      DB_NAME: studyhub
+    env_file:
+      - .env
+    
+    #reverse proxy for https + custom domain
+  caddy:
+    image: caddy:2
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
     depends_on:
-      - db
+      - web
 
 volumes:
   mysql_data:
+  caddy_data:
+
+
+

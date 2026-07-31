@@ -1,0 +1,3 @@
+c270-studyhub.duckdns.org {
+    reverse_proxy web:3000
+}
