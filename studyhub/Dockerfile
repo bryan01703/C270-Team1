@@ -1,7 +1,8 @@
-FROM node:18-alpine
-WORKDIR /app
+FROM node:22-alpine
+RUN npm install -g npm@latest
+WORKDIR /usr/src/app
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 COPY . .
 EXPOSE 3000
-CMD ["npm", "start"]
+CMD ["node", "app.js"]
