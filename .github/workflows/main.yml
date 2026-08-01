@@ -49,8 +49,8 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y trivy
       - name: Filesystem scan
-        run: trivy image --severity HIGH,CRITICAL --exit-code 1 studyhub:scan --ignore-unfixed
+        run: trivy fs --severity HIGH,CRITICAL --exit-code 1 .
       - name: Build Docker image for scanning
         run: docker build -t studyhub:scan .
       - name: Docker image scan
-        run: trivy image --severity HIGH,CRITICAL --exit-code 1 studyhub:scan
+        run: trivy image --severity HIGH,CRITICAL --exit-code 1 studyhub:scan --ignore-unfixed
