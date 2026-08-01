@@ -12,31 +12,23 @@ jobs:
     defaults:
       run:
         working-directory: ./studyhub
-
     steps:
       - name: Checkout repository code
         uses: actions/checkout@v3
-
       - name: Install Ansible
         run: pip install ansible
-
       - name: Execute Ansible IaC Playbook
         run: ansible-playbook -i ../ansible/inventory.ini ../ansible/deploy-playbook.yml
-
       - name: Set up Node.js 18 environment
         uses: actions/setup-node@v3
         with:
           node-version: 18
-
       - name: Install application dependencies
         run: npm ci
-
       - name: Validate Docker Compose configuration
         run: docker compose config
-
       - name: Test container build
         run: docker compose build
-
       - name: Trigger Render Cloud Deployment (CD)
         run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
 
