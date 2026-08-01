@@ -39,3 +39,26 @@ jobs:
 
       - name: Trigger Render Cloud Deployment (CD)
         run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
+
+  security-scan:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./studyhub
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v3
+      - name: Install Trivy
+        run: |
+          sudo apt-get install -y wget apt-transport-https gnupg lsb-release
+          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo gpg --dearmor -o /usr/share/keyrings/trivy.gpg
+          echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+          sudo apt-get update
+          sudo apt-get install -y trivy
+      - name: Filesystem scan
+        run: trivy fs --severity HIGH,CRITICAL --exit-code 1 .
+      - name: Build Docker image for scanning
+        run: docker build -t studyhub:scan .
+      - name: Docker image scan
+        run: trivy image --severity HIGH,CRITICAL --exit-code 1 studyhub:scan
