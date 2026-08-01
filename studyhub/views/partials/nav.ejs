@@ -6,9 +6,13 @@
     <a href="/tasks">My Tasks</a>
     <a href="/studygroups">Study Groups</a>
     <a href="/marketplace">Marketplace</a>
+    <a href="/tutors">Find a Tutor</a>
     <a href="/announcements">Announcements</a>
     <a href="/grades">Grade Tracker</a>
     <a href="/profile">Profile</a>
+    <% if (locals.userRole === 'Admin') { %>
+      <a href="/tutors/admin/reports">Tutor Reports</a>
+    <% } %>
     <a href="/auth/logout">Logout</a>
   <% } else { %>
     <a href="/login">Login</a>

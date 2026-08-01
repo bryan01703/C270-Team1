@@ -126,9 +126,50 @@ CREATE TABLE IF NOT EXISTS marketplace_notes (
   FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
+CREATE TABLE IF NOT EXISTS tutor_profiles (
+  tutor_id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL UNIQUE,
+  headline VARCHAR(150) NOT NULL,
+  subjects VARCHAR(255) NOT NULL,
+  about TEXT,
+  hourly_rate DECIMAL(8,2) NOT NULL DEFAULT 0,
+  is_active TINYINT(1) NOT NULL DEFAULT 1,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
 -- ============================================================
 -- Tables with multi-level FK dependencies
 -- ============================================================
+
+CREATE TABLE IF NOT EXISTS tutor_reviews (
+  review_id INT AUTO_INCREMENT PRIMARY KEY,
+  tutor_id INT NOT NULL,
+  reviewer_id INT NOT NULL,
+  rating TINYINT NOT NULL,
+  comment TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE KEY unique_tutor_review (tutor_id, reviewer_id),
+  FOREIGN KEY (tutor_id) REFERENCES tutor_profiles(tutor_id) ON DELETE CASCADE,
+  FOREIGN KEY (reviewer_id) REFERENCES users(user_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS tutor_reports (
+  report_id INT AUTO_INCREMENT PRIMARY KEY,
+  reporter_id INT NOT NULL,
+  target_type ENUM('Tutor', 'Review') NOT NULL,
+  tutor_id INT,
+  review_id INT,
+  reason VARCHAR(500) NOT NULL,
+  status ENUM('Pending', 'Kept', 'Removed') NOT NULL DEFAULT 'Pending',
+  resolved_by INT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  resolved_at TIMESTAMP NULL,
+  FOREIGN KEY (reporter_id) REFERENCES users(user_id) ON DELETE CASCADE,
+  FOREIGN KEY (tutor_id) REFERENCES tutor_profiles(tutor_id) ON DELETE SET NULL,
+  FOREIGN KEY (review_id) REFERENCES tutor_reviews(review_id) ON DELETE SET NULL,
+  FOREIGN KEY (resolved_by) REFERENCES users(user_id) ON DELETE SET NULL
+);
 
 CREATE TABLE IF NOT EXISTS study_group_members (
   group_id INT NOT NULL,

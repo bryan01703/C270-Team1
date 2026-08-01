@@ -12,6 +12,7 @@ const studyGroupRoutes = require('./routes/studygroups');
 const homeRoutes = require('./routes/home');
 const marketplaceRoutes = require('./routes/marketplace');
 const announcementsRoutes = require('./routes/announcements');
+const tutorRoutes = require('./routes/tutors');
 const seedAdmin = require('./database/seed_admin');
 
 const app = express();
@@ -41,6 +42,7 @@ app.use('/', studyGroupRoutes);
 app.use('/marketplace', marketplaceRoutes);
 app.use('/', homeRoutes);
 app.use('/', announcementsRoutes);
+app.use('/', tutorRoutes);
 
 app.get('/', (req, res) => {
   if (req.session.userId) return res.redirect('/home');

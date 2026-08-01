@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> - StudyHub</title>
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <%- include('partials/nav') %>
+
+  <main class="wide">
+    <% if (message) { %>
+      <div class="alert alert-success"><%= message %></div>
+    <% } %>
+
+    <% if (page === 'directory') { %>
+      <div class="card mb-2">
+        <h1>Find a Tutor</h1>
+        <p>Browse tutors, compare their rates and ratings, or create your own tutor profile.</p>
+
+        <% if (canBeTutor) { %>
+          <details class="mt-2" <%= ownProfile ? '' : 'open' %>>
+            <summary><strong><%= ownProfile ? 'Edit My Tutor Profile' : 'Become a Tutor' %></strong></summary>
+            <form action="/tutors/profile" method="POST" class="mt-1">
+              <div class="form-group">
+                <label for="headline">Tutor headline</label>
+                <input id="headline" name="headline" type="text"
+                  placeholder="e.g. C270 DevOps Tutor"
+                  value="<%= ownProfile ? ownProfile.headline : '' %>" required>
+              </div>
+
+              <div class="form-group">
+                <label for="subjects">Modules</label>
+                <input id="subjects" name="subjects" type="text"
+                  placeholder="e.g. C270, C304"
+                  value="<%= ownProfile ? ownProfile.subjects : '' %>" required>
+                <small class="helper-text">Separate module codes with commas.</small>
+              </div>
+
+              <div class="form-group">
+                <label for="hourly_rate">Hourly rate (SGD)</label>
+                <input id="hourly_rate" name="hourly_rate" type="number" min="0" step="0.01"
+                  value="<%= ownProfile ? Number(ownProfile.hourly_rate) : 0 %>" required>
+                <small class="helper-text">Enter 0 if tutoring is free.</small>
+              </div>
+
+              <div class="form-group">
+                <label for="about">About</label>
+                <textarea id="about" name="about" rows="3"
+                  placeholder="Describe what you can help with."><%= ownProfile ? ownProfile.about : '' %></textarea>
+              </div>
+
+              <button type="submit" class="btn">Save Tutor Profile</button>
+            </form>
+          </details>
+        <% } %>
+      </div>
+
+      <div class="card">
+        <h2>Available Tutors</h2>
+        <% if (tutors.length === 0) { %>
+          <p>No tutors have listed themselves yet.</p>
+        <% } else { %>
+          <div class="listing-grid mt-1">
+            <% tutors.forEach(function(tutor) { %>
+              <a href="/tutors/<%= tutor.tutor_id %>" class="listing-card">
+                <div class="listing-card-top">
+                  <strong><%= tutor.full_name %></strong>
+                  <span class="slots-tag">
+                    <%= Number(tutor.hourly_rate) === 0 ? 'Free' : ('$' + Number(tutor.hourly_rate).toFixed(2) + '/hr') %>
+                  </span>
+                </div>
+                <h3><%= tutor.headline %></h3>
+                <p class="listing-meta"><%= tutor.subjects %></p>
+                <p class="listing-meta">
+                  <% if (tutor.review_count > 0) { %>
+                    <%= Number(tutor.average_rating).toFixed(1) %>/5
+                    (<%= tutor.review_count %> review<%= tutor.review_count === 1 ? '' : 's' %>)
+                  <% } else { %>
+                    No reviews yet
+                  <% } %>
+                </p>
+              </a>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+    <% } %>
+
+    <% if (page === 'profile') { %>
+      <div class="card mb-2">
+        <p><a href="/tutors">&larr; Back to tutors</a></p>
+        <div class="listing-card-top mt-1">
+          <span class="role-badge"><%= tutor.role_type %></span>
+          <span class="slots-tag">
+            <%= Number(tutor.hourly_rate) === 0 ? 'Free' : ('$' + Number(tutor.hourly_rate).toFixed(2) + '/hr') %>
+          </span>
+        </div>
+        <h1><%= tutor.headline %></h1>
+        <p><strong><%= tutor.full_name %></strong> &middot; <%= tutor.subjects %></p>
+        <% if (tutor.about) { %><p><%= tutor.about %></p><% } %>
+        <p>
+          <% if (averageRating !== null) { %>
+            <strong><%= averageRating.toFixed(1) %>/5</strong> from <%= reviews.length %>
+            review<%= reviews.length === 1 ? '' : 's' %>
+          <% } else { %>
+            No ratings yet
+          <% } %>
+        </p>
+
+        <details class="mt-2">
+          <summary>Report this tutor</summary>
+          <form action="/tutors/<%= tutor.tutor_id %>/report" method="POST" class="mt-1">
+            <div class="form-group">
+              <label for="tutor_reason">Reason</label>
+              <textarea id="tutor_reason" name="reason" rows="2" maxlength="500" required></textarea>
+            </div>
+            <button type="submit" class="btn btn-danger">Send Report</button>
+          </form>
+        </details>
+      </div>
+
+      <div class="card mb-2">
+        <h2>Reviews</h2>
+        <% if (reviews.length === 0) { %>
+          <p>No reviews yet.</p>
+        <% } %>
+
+        <% reviews.forEach(function(review) { %>
+          <div class="card mt-1" style="background:#f8fafc; padding:1rem;">
+            <strong><%= review.reviewer_name %></strong>
+            <span class="slots-tag" style="float:right;"><%= review.rating %>/5</span>
+            <% if (review.comment) { %><p><%= review.comment %></p><% } %>
+            <details>
+              <summary>Report this review</summary>
+              <form action="/tutors/<%= tutor.tutor_id %>/reviews/<%= review.review_id %>/report" method="POST" class="mt-1">
+                <div class="form-group">
+                  <label for="review_reason_<%= review.review_id %>">Reason</label>
+                  <textarea id="review_reason_<%= review.review_id %>" name="reason" rows="2" maxlength="500"
+                    placeholder="e.g. harassment or bullying" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-danger">Send Report</button>
+              </form>
+            </details>
+          </div>
+        <% }) %>
+      </div>
+
+      <% if (!isOwner) { %>
+        <div class="card">
+          <h2><%= ownReview ? 'Edit My Review' : 'Write a Review' %></h2>
+          <form action="/tutors/<%= tutor.tutor_id %>/reviews" method="POST">
+            <div class="form-group">
+              <label for="rating">Rating</label>
+              <select id="rating" name="rating" required>
+                <option value="">Choose a rating</option>
+                <% [5, 4, 3, 2, 1].forEach(function(value) { %>
+                  <option value="<%= value %>" <%= ownReview && ownReview.rating === value ? 'selected' : '' %>>
+                    <%= value %>/5
+                  </option>
+                <% }) %>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="comment">Comment</label>
+              <textarea id="comment" name="comment" rows="3"><%= ownReview ? ownReview.comment : '' %></textarea>
+            </div>
+            <button type="submit" class="btn">Save Review</button>
+          </form>
+        </div>
+      <% } %>
+    <% } %>
+
+    <% if (page === 'reports') { %>
+      <div class="card">
+        <h1>Tutor Reports</h1>
+        <p>Review each report and choose whether to keep or remove the reported item.</p>
+
+        <% if (reports.length === 0) { %>
+          <p class="mt-2">There are no pending reports.</p>
+        <% } %>
+
+        <% reports.forEach(function(report) { %>
+          <div class="card mt-2" style="background:#f8fafc;">
+            <h3><%= report.target_type %> Report</h3>
+            <p><strong>Reported by:</strong> <%= report.reporter_name %></p>
+            <p><strong>Reason:</strong> <%= report.reason %></p>
+
+            <% if (report.target_type === 'Tutor') { %>
+              <p><strong>Tutor:</strong> <%= report.tutor_name %> - <%= report.tutor_headline %></p>
+              <% if (report.tutor_id) { %><p><a href="/tutors/<%= report.tutor_id %>">View tutor profile</a></p><% } %>
+            <% } else { %>
+              <p><strong>Review author:</strong> <%= report.review_author %></p>
+              <p><strong>Review:</strong> <%= report.review_rating %>/5 - <%= report.review_comment || '(no comment)' %></p>
+            <% } %>
+
+            <form action="/tutors/admin/reports/<%= report.report_id %>" method="POST" class="action-buttons">
+              <button type="submit" name="action" value="keep" class="btn btn-secondary">Keep</button>
+              <button type="submit" name="action" value="remove" class="btn btn-danger">Remove</button>
+            </form>
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </main>
+</body>
+</html>
