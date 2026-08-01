@@ -1,0 +1,44 @@
+name: Tutor Feature Check
+
+on:
+  push:
+    paths:
+      - "studyhub/routes/tutors.js"
+      - "studyhub/views/tutors.ejs"
+      - "studyhub/database/*tutor*"
+      - ".github/workflows/tutor-check.yml"
+  pull_request:
+    paths:
+      - "studyhub/routes/tutors.js"
+      - "studyhub/views/tutors.ejs"
+      - "studyhub/database/*tutor*"
+      - ".github/workflows/tutor-check.yml"
+
+jobs:
+  tutor-check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: studyhub
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: studyhub/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check Tutor JavaScript
+        run: |
+          node --check routes/tutors.js
+          node --check database/migrate_tutors.js
+
+      - name: Check Tutor page
+        run: node -e "const fs=require('fs'); const ejs=require('ejs'); ejs.compile(fs.readFileSync('views/tutors.ejs', 'utf8'));"
