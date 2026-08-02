@@ -3,7 +3,7 @@ const router = express.Router();
 const pool = require('../config/db');
 const { requireAuth } = require('../middleware/auth');
 
-router.use(requireAuth);
+router.use('/tutors', requireAuth);
 
 function isAdmin(req) {
   return req.session.user && req.session.user.role_type === 'Admin';
