@@ -18,3 +18,16 @@ jobs:
             sudo k3s kubectl apply -f studyhub/K8s/
             sudo k3s kubectl rollout restart deployment/studyhub-app
             sudo k3s kubectl rollout status deployment/studyhub-app --timeout=120s
+
+  post-deploy-check:
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify app is responding
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_SSH_KEY }}
+          script: |
+            curl -f http://localhost:3000 || exit 1
