@@ -1,10 +1,7 @@
-
 name: Deploy to GCE
-
 on:
   push:
     branches: [main]
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -19,4 +16,12 @@ jobs:
             cd ~/C270-Team1
             git pull origin main
             cd studyhub
+            cat > .env << 'EOF'
+            DB_HOST=${{ secrets.DB_HOST }}
+            DB_PORT=${{ secrets.DB_PORT }}
+            DB_USER=${{ secrets.DB_USER }}
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            DB_NAME=${{ secrets.DB_NAME }}
+            SESSION_SECRET=${{ secrets.SESSION_SECRET }}
+            EOF
             sudo docker compose up --build -d
