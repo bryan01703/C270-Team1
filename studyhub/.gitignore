@@ -1,3 +1,4 @@
 node_modules/
 database/studyhub.db
-.DS_Storew
+.DS_Storew.env
+K8s/secret.yml
