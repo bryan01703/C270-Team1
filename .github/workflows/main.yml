@@ -1,11 +1,11 @@
 name: CI/CD Pipeline
-
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
-
+  schedule: # <-- SCHEDULED SCAN: runs daily even without a push
+    - cron: '0 0 * * *'
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
@@ -31,7 +31,6 @@ jobs:
         run: docker compose build
       - name: Trigger Render Cloud Deployment (CD)
         run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
-
   security-scan:
     needs: build-and-test
     runs-on: ubuntu-latest
@@ -41,6 +40,10 @@ jobs:
     steps:
       - name: Checkout repository code
         uses: actions/checkout@v3
+      - name: Secret scan (Gitleaks) # <-- GITLEAKS: checks for leaked passwords/API keys in code
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Install Trivy
         run: |
           sudo apt-get install -y wget apt-transport-https gnupg lsb-release
