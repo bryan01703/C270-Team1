@@ -81,7 +81,7 @@ C270-Team1/
 docker compose up --build
 ```
 
-This spins up the app container and a Caddy reverse proxy (configured for the `c270-studyhub.duckdns.org` domain).
+This spins up the app container and a Caddy reverse proxy (configured for the `c270-studyhub.duckdns.org` domain)
 
 ## Deployment
 
