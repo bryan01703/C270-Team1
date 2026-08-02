@@ -111,7 +111,7 @@ Ansible: ansible/deploy-playbook.yml verifies Docker and Docker Compose, then au
 
 - **Gitleaks** scans for leaked secrets/API keys on every CI run.
 - **Trivy** scans both the filesystem and the built Docker image for HIGH/CRITICAL vulnerabilities, with a scheduled daily scan in addition to push/PR triggers.
-- Known accepted CVEs are tracked in `.trivyignore`.
+  
 
 ## Tutor Feature CI
 
