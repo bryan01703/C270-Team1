@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: studyhub-app
 spec:
-  replicas: 2 # Runs 2 identical pods for high availability & load balancing
+  replicas: 1 # Runs 1 identical pods for high availability & load balancing
   selector:
     matchLabels:
       app: studyhub
