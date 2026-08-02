@@ -63,7 +63,11 @@ app.get('/unauthorized', (req, res) => {
   res.status(403).render('unauthorized', { title: 'Access Denied' });
 });
 
-app.listen(PORT, () => {
-  console.log(`StudyHub running at http://localhost:${PORT}`);
-  seedAdmin().catch(err => console.error('Admin seed failed:', err.message));
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`StudyHub running at http://localhost:${PORT}`);
+    seedAdmin().catch(err => console.error('Admin seed failed:', err.message));
+  });
+}
+
+module.exports = app;

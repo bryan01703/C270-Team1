@@ -33,6 +33,8 @@ jobs:
           node-version: 18
       - name: Install application dependencies
         run: npm ci
+      - name: Run application tests
+        run: npm test
       - name: Validate Docker Compose configuration
         run: docker compose config
       - name: Test container build

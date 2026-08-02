@@ -118,5 +118,3 @@ Ansible: ansible/deploy-playbook.yml verifies Docker and Docker Compose, then au
 ## Tutor Feature CI
 
 A dedicated workflow (`tutor-check.yml`) runs only when tutor-related files change (`routes/tutors.js`, `views/tutors.ejs`, tutor migration scripts). It syntax-checks the JavaScript and confirms the EJS template compiles.
-
-Test case
