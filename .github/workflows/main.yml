@@ -37,8 +37,7 @@ jobs:
         run: docker compose config
       - name: Test container build
         run: docker compose build
-      - name: Trigger Render Cloud Deployment (CD)
-        run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
+
   security-scan:
     needs: build-and-test
     runs-on: ubuntu-latest
