@@ -85,15 +85,27 @@ This spins up the app container and a Caddy reverse proxy (configured for the `c
 
 ## Deployment
 
-- **CI:** On every push/PR to `main`, GitHub Actions installs dependencies, runs an Ansible IaC playbook, validates and builds the Docker Compose config.
-- **CD:** On success, a Render deploy hook is triggered to push the latest build live.
-- **Cloud deployment:** A separate workflow builds and pushes the Docker image to Docker Hub, and another SSHes into a GCE VM to pull the latest code and restart the stack via Docker Compose.
-- **Kubernetes:** Manifests in `studyhub/K8s/` define a 2-replica app Deployment, a MySQL Deployment with persistent storage, and an Ingress routing `c270-studyhub.duckdns.org` traffic to the app. Apply with:
+- **CI:** GitHub Actions runs on pushes and pull requests to `main`. It installs dependencies, runs validation checks, executes the Ansible playbook, validates Docker Compose, builds the Docker image, and performs Gitleaks and Trivy security scans. Application tests will run once `app.test.js` is integrated.
+
+- **Docker image delivery:** A separate workflow builds the StudyHub Docker image and pushes it to Docker Hub. Kubernetes pulls this image during deployment.
+
+- **CD:** The `Deploy to GCE` workflow connects to the current GCE VM through SSH, pulls the latest repository changes, and deploys the Kubernetes manifests using K3s:
+
   ```bash
-  kubectl apply -f K8s/
-  ```
-  > **Note:** the app and MySQL manifests reference a Kubernetes Secret named `studyhub-secrets` (DB credentials, session secret) that must be created manually before applying — it is intentionally not committed to the repo.
-- **Ansible:** `ansible/deploy-playbook.yml` verifies Docker/Compose are installed, tears down and rebuilds the stack (`docker compose down` → `up --build -d`).
+  sudo k3s kubectl apply -f studyhub/K8s/
+  sudo k3s kubectl rollout restart deployment/studyhub-app
+  sudo k3s kubectl rollout status deployment/studyhub-app --timeout=120s
+Kubernetes on GCE: K3s runs on the GCE VM. The manifests in studyhub/K8s/ define:
+A two-replica StudyHub application Deployment.
+A MySQL Deployment with persistent storage.
+ClusterIP Services for the application and database.
+A Traefik Ingress routing c270-studyhub.duckdns.org to StudyHub.
+Apply the manifests manually with:
+sudo k3s kubectl apply -f studyhub/K8s/
+
+Kubernetes secrets: The app and MySQL manifests use a Kubernetes Secret named studyhub-secrets for database credentials and the session secret. This secret is created manually from the VM’s environment configuration and is intentionally not committed to the repository.
+
+Ansible: ansible/deploy-playbook.yml verifies Docker and Docker Compose, then automates the Docker Compose deployment. It is retained as an infrastructure automation component but is separate from the Kubernetes runtime deployment.
 
 ## Security / DevSecOps
 
