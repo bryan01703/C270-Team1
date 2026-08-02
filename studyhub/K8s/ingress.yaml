@@ -4,6 +4,12 @@ metadata:
   name: studyhub-ingress
 spec:
   ingressClassName: traefik
+  
+  tls:
+    - hosts:
+        - c270-studyhub.duckdns.org
+      secretName: studyhub-tls
+
   rules:
   - host: c270-studyhub.duckdns.org # Domain name to access our site
     http:
