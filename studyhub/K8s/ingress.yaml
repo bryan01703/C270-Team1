@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   name: studyhub-ingress
 spec:
-  ingressClassName: nginx
+  ingressClassName: traefik
   rules:
   - host: c270-studyhub.duckdns.org # Domain name to access our site
     http:

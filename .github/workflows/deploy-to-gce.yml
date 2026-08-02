@@ -15,13 +15,6 @@ jobs:
           script: |
             cd ~/C270-Team1
             git pull origin main
-            cd studyhub
-            cat > .env << 'EOF'
-            DB_HOST=${{ secrets.DB_HOST }}
-            DB_PORT=${{ secrets.DB_PORT }}
-            DB_USER=${{ secrets.DB_USER }}
-            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-            DB_NAME=${{ secrets.DB_NAME }}
-            SESSION_SECRET=${{ secrets.SESSION_SECRET }}
-            EOF
-            sudo docker compose up --build -d
+            sudo k3s kubectl apply -f studyhub/K8s/
+            sudo k3s kubectl rollout restart deployment/studyhub-app
+            sudo k3s kubectl rollout status deployment/studyhub-app --timeout=120s
