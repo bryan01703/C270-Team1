@@ -105,12 +105,3 @@ This spins up the app container and a Caddy reverse proxy (configured for the `c
 
 A dedicated workflow (`tutor-check.yml`) runs only when tutor-related files change (`routes/tutors.js`, `views/tutors.ejs`, tutor migration scripts). It syntax-checks the JavaScript and confirms the EJS template compiles.
 
-## Team Contributions
-
-| Member | Area |
-|---|---|
-| Vickson | Containerization, CI |
-| Bryan | CD, cloud deployment |
-| Angelo | DevSecOps |
-| WeiHao | Kubernetes, Ansible |
-| Aisha | Tutor-specific CI |
