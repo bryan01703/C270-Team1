@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: studyhub-app
 spec:
-  replicas: 1 # Runs 1 identical pods for high availability & load balancing
+  replicas: 1 # Runs 1
   selector:
     matchLabels:
       app: studyhub
@@ -24,11 +24,17 @@ spec:
             secretKeyRef:
               name: studyhub-secrets
               key: DB_HOST
+        - name: DB_PORT
+          valueFrom:
+            secretKeyRef:
+              name: studyhub-secrets
+              key: DB_PORT
         - name: DB_USER
           valueFrom:
             secretKeyRef:
               name: studyhub-secrets
               key: DB_USER
+        
         - name: DB_PASSWORD
           valueFrom:
             secretKeyRef:
