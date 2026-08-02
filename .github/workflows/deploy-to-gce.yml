@@ -30,4 +30,5 @@ jobs:
           username: ${{ secrets.VM_USER }}
           key: ${{ secrets.VM_SSH_KEY }}
           script: |
-            curl -f http://localhost:3000 || exit 1
+            CLUSTER_IP=$(sudo k3s kubectl get svc studyhub-service -o jsonpath='{.spec.clusterIP}')
+            curl -f http://$CLUSTER_IP:80 || exit 1
